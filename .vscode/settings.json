@@ -1,0 +1,46 @@
+{
+    "files.associations": {
+        "sqlite3recover.h": "c",
+        "tuple": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "utility": "c",
+        "dblexer.h": "c",
+        "dbparser.h": "c",
+        "db_query_mm.h": "c",
+        "istream": "c",
+        "dbstorage.h": "c",
+        "*.tcc": "c",
+        "memory": "c",
+        "functional": "c",
+        "variant": "c",
+        "db_ops_types.h": "c",
+        "ratio": "c",
+        "optional": "c",
+        "ostream": "c",
+        "system_error": "c",
+        "type_traits": "c",
+        "relation.h": "c",
+        "sstream": "c",
+        "deque": "c",
+        "list": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "fstream": "c",
+        "dbcreate.h": "c",
+        "dbinsert_check.h": "c",
+        "dbparseexpr.h": "c",
+        "dbupdate.h": "c",
+        "parser.h": "c"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "editor.formatOnSave": true,
+    "C_Cpp.errorSquiggles": "disabled"
+}
