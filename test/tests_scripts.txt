@@ -1,0 +1,29 @@
+- program:
+name: "experiment_Brazilian_magnetic_anomaly"
+* params: ["period","averaging_factor","running_time","target_orientation",start_conditions,"keep_turn_on"]
+* variables: #секция_объявления_переменных
+- start_time: ["integer"]
+* constant: #секция_объявления_констант
+- latitude: ["41.40338"]
+- longitude: ["2.17403"]
+
+description: "Cбор магнитометрических и температурных данных"
+* steps: #начало_скрипта
+- wait_coordinates: ["latitude",longitude]_#ждём_условие_входа_в_бразильскую_аномалию
+- orientation: ["${target_orientation}"]_#ждём_ориентации_аппарата
+- start_time: ["c_get_time()"]_#запоминаем_время_старта_эксперимента
+- payload_power: ["Magnetometer","true"]_#включаем_питание
+- payload_power: ["Giroscope","true"]
+- wait: ["120"]
+- create_meter: ["B_A"]
+- add_chanal_meter: ["B_A","Magnetometer",${period},${averaging_factor}]
+- add_chanal_meter: ["B_A","Giroscope",${period},${averaging_factor}]
+- run_meter: ["B_A"]
+- wait: ["${period}+start_time"]
+- stop_meter: ["B_A"]
+- payload_power: ["motherboard",${keep_turn_on}]_#включаем_питание
+- payload_power: ["UMK",${keep_turn_on}]
+- payload_power: ["MKSOS",${keep_turn_on}]
+- payload_power: ["Flywheels",${keep_turn_on}]
+- exit:
+["SUCESSES"]
