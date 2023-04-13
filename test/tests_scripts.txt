@@ -4,8 +4,8 @@ name: "experiment_Brazilian_magnetic_anomaly"
 * variables: #секция_объявления_переменных
 - start_time: ["integer"]
 * constant: #секция_объявления_констант
-- latitude: ["41.40338"]
-- longitude: ["2.17403"]
+- latitude: ["41.40338",DECIMAL]
+- longitude: ["2.17403",DECIMAL]
 
 description: "Cбор магнитометрических и температурных данных"
 * steps: #начало_скрипта

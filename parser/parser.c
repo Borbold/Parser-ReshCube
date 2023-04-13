@@ -6,6 +6,10 @@
 
 #define DATA_FILE "./test/tests_scripts.txt"
 
+static void make_param(FILE *data_file);
+static void make_variable(FILE *data_file);
+static void make_constant(FILE *data_file);
+
 void main() {
   FILE *data_file = fopen(DATA_FILE, "r");
   char buff[64];
@@ -15,25 +19,16 @@ void main() {
       if (strcmp(buff, basic_command[PROGRAM]) == 0) {
         printf("%sPROGRAM exist%s\n", "\033[1;34m", "\033[0m");
       } else if (strcmp(buff, basic_command[PARAMS]) == 0) {
-        printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
-        char var[200];
-        fscanf((FILE *)data_file, "%s", var);
-        printf("%s\n", var);
+        make_param(data_file);
       } else if (strcmp(buff, basic_command[VARIABLES]) == 0) {
-        printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
-        char var[200];
-        fscanf((FILE *)data_file, "%s", var);
-        printf("%s\n", var);
+        make_variable(data_file);
       } else if (strcmp(buff, basic_command[START_TIME]) == 0) {
         printf("%sStart time exist%s\n", "\033[1;34m", "\033[0m");
         char var[200];
         fscanf((FILE *)data_file, "%s", var);
         printf("%s\n", var);
       } else if (strcmp(buff, basic_command[CONSTANT]) == 0) {
-        printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
-        char var[200];
-        fscanf((FILE *)data_file, "%s", var);
-        printf("%s\n", var);
+        make_constant(data_file);
       } else if (strcmp(buff, basic_command[LATITUDE]) == 0) {
         printf("%sLATITUDE exist%s\n", "\033[1;34m", "\033[0m");
         char var[200];
@@ -98,4 +93,25 @@ void main() {
   }
 
   fclose(data_file);
+}
+
+void make_param(FILE *data_file) {
+  printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
+  char var[200];
+  fscanf((FILE *)data_file, "%s", var);
+  printf("%s\n", var);
+}
+
+void make_variable(FILE *data_file) {
+  printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
+  char var[200];
+  fscanf((FILE *)data_file, "%s", var);
+  printf("%s\n", var);
+}
+
+void make_constant(FILE *data_file) {
+  printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
+  char var[200];
+  fscanf((FILE *)data_file, "%s", var);
+  printf("%s\n", var);
 }
