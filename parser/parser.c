@@ -6,9 +6,9 @@
 
 #define DATA_FILE "./test/tests_scripts.txt"
 
-static void make_param(FILE *data_file);
-static void make_variable(FILE *data_file);
-static void make_constant(FILE *data_file);
+static void read_param(FILE *data_file);
+static void read_variable(FILE *data_file);
+static void read_constant(FILE *data_file);
 
 void main() {
   FILE *data_file = fopen(DATA_FILE, "r");
@@ -21,16 +21,16 @@ void main() {
         if (strcmp(buff, basic_command[PROGRAM]) == 0) {
           printf("%sPROGRAM exist%s\n", "\033[1;34m", "\033[0m");
         } else if (strcmp(buff, basic_command[PARAMS]) == 0) {
-          make_param(data_file);
+          read_param(data_file);
         } else if (strcmp(buff, basic_command[VARIABLES]) == 0) {
-          make_variable(data_file);
+          read_variable(data_file);
         } else if (strcmp(buff, basic_command[START_TIME]) == 0) {
           printf("%sStart time exist%s\n", "\033[1;33m", "\033[0m");
           char var[200];
           fscanf((FILE *)data_file, "%s", var);
           printf("%s\n", var);
         } else if (strcmp(buff, basic_command[CONSTANT]) == 0) {
-          make_constant(data_file);
+          read_constant(data_file);
         } else if (strcmp(buff, basic_command[LATITUDE]) == 0) {
           printf("%sLATITUDE exist%s\n", "\033[1;34m", "\033[0m");
           char var[200];
@@ -96,23 +96,35 @@ void main() {
   fclose(data_file);
 }
 
-void make_param(FILE *data_file) {
+/* Read */
+void read_param(FILE *data_file) {
   printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
   char var[200];
   fscanf((FILE *)data_file, "%s", var);
   printf("%s\n", var);
 }
-
-void make_variable(FILE *data_file) {
+void read_variable(FILE *data_file) {
   printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
   char var[200];
   fscanf((FILE *)data_file, "%s", var);
   printf("%s\n", var);
 }
-
-void make_constant(FILE *data_file) {
+void read_constant(FILE *data_file) {
   printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
   char var[200];
   fscanf((FILE *)data_file, "%s", var);
   printf("%s\n", var);
 }
+/* Read */
+
+/* Make */
+void make_param(char *name, char *type) {
+  printf("\nCreate param %s with type %s\n", name, type);
+}
+void make_variable(char *name, char *type) {
+  printf("\nCreate variable %s with type %s\n", name, type);
+}
+void make_constant(char *name, char *type) {
+  printf("\nCreate constant %s with type %s\n", name, type);
+}
+/* Make */
