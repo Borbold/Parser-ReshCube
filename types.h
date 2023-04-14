@@ -4,15 +4,19 @@
 #include "ref.h"
 
 typedef struct {
-    param_type type_param;
-    struct {
-        attr_type type;
-        union {
-          int integer;
-          float decimal;
-          char *string;
-        }val;
-    }attr;
+  char *name;
+  str_type type;
+  struct {
+    char *name;
+    attr_type type;
+    union {
+      int integer;
+      float decimal;
+      char *string;
+    } val;
+  } attr;
+  int offset;
+  int length;
 } basic_attr;
 
 #endif

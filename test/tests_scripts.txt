@@ -1,7 +1,7 @@
 - program:
 name: "experiment_Brazilian_magnetic_anomaly"
 * params: ["period","averaging_factor","running_time","target_orientation",start_conditions,"keep_turn_on"]
-* variables: #секция_объявления_переменных
+* variables: [period,INT,5] [averaging_factor,INT,2]
 - start_time: ["integer"]
 * constant: #секция_объявления_констант
 - latitude: ["41.40338",DECIMAL]

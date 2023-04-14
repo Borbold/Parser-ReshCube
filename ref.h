@@ -12,7 +12,11 @@ typedef enum {
   VAR,
   PAR,
   CON,
-} param_type;
+  FUN,
+  TAG,
+  ERR,
+  NUL,
+} str_type;
 
 /* Type size references */
 static const int SIZE_BYTE = sizeof(char);

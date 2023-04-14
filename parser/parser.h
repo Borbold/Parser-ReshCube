@@ -3,7 +3,7 @@
 
 typedef enum {
   PROGRAM,
-  PARAMS,
+  // PARAMS,
   VARIABLES,
   START_TIME,
   CONSTANT,
@@ -21,23 +21,12 @@ typedef enum {
   EXIT
 } basic_string;
 
-const char *const basic_command[] = {"program:",
-                                     "params:",
-                                     "variables:",
-                                     "start_time:",
-                                     "constant:",
-                                     "latitude:",
-                                     "longitude:",
-                                     "steps:",
-                                     "wait_coordinates:",
-                                     "orientation:",
-                                     "payload_power:",
-                                     "wait:",
-                                     "create_meter:",
-                                     "add_chanal_meter:",
-                                     "run_meter:",
-                                     "stop_meter:",
-                                     "exit:",
-                                     0};
+const char *const basic_command[] = {
+    "program:",
+    //"params:",
+    "variables:", "start_time:", "constant:", "latitude:", "longitude:",
+    "steps:", "wait_coordinates:", "orientation:", "payload_power:", "wait:",
+    "create_meter:", "add_chanal_meter:", "run_meter:", "stop_meter:", "exit:",
+    0};
 
 #endif
