@@ -1,14 +1,16 @@
-- program:
+program:
 name: "experiment_Brazilian_magnetic_anomaly"
-* params: ["period","averaging_factor","running_time","target_orientation",start_conditions,"keep_turn_on"]
-* variables: [period,INT,5] [averaging_factor,INT,2]
+description: "Cбор магнитометрических и температурных данных"
+params: ["period","averaging_factor","running_time","target_orientation",start_conditions,"keep_turn_on"]
+variables:
+    [period,5,INT]
+    [averaging_factor,2,INT]
 - start_time: ["integer"]
-* constant: #секция_объявления_констант
+constant: #секция_объявления_констант
 - latitude: ["41.40338",DECIMAL]
 - longitude: ["2.17403",DECIMAL]
 
-description: "Cбор магнитометрических и температурных данных"
-* steps: #начало_скрипта
+steps: #начало_скрипта
 - wait_coordinates: ["latitude",longitude]_#ждём_условие_входа_в_бразильскую_аномалию
 - orientation: ["${target_orientation}"]_#ждём_ориентации_аппарата
 - start_time: ["c_get_time()"]_#запоминаем_время_старта_эксперимента

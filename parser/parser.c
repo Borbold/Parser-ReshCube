@@ -27,11 +27,11 @@ char *fill_out(char r_b, char *buff, int *read_count) {
   return buff;
 }
 
-char *get_buff(FILE *data_file) {
+char *get_buff(FILE *file) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
-  while (fread(&r_b, 1, 1, data_file) > 0) {
+  while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '\n')
       break;
     fill_out(r_b, buff, &read_count);
@@ -39,11 +39,59 @@ char *get_buff(FILE *data_file) {
   return buff;
 }
 
-basic_attr *attr_get(char *name, str_type type) {
-  basic_attr *attr = malloc(sizeof(attr));
-  attr->name = name;
-  attr->type = type;
-  return attr;
+basic_attr *attr_get_type(char *name, str_type type) {
+  basic_attr *struct_attr = malloc(sizeof(basic_attr));
+  struct_attr->name = name;
+  struct_attr->type = type;
+  return struct_attr;
+}
+
+attr_type get_type(char *str) {
+  if (strcmp(str, "INT") == 0)
+    return INT;
+  else if (strcmp(str, "DEC") == 0)
+    return DEC;
+  else if (strcmp(str, "STR") == 0)
+    return STR;
+}
+
+basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
+  get_buff(file);
+  basic_attr *struct_attr = malloc(sizeof(basic_attr));
+  for (int i = 0; i < count_var; i++) {
+    char *buff = get_buff(file);
+    struct_attr->name = name;
+    struct_attr->type = type;
+
+    struct_attr->attr.name = malloc(20);
+    struct_attr->attr.val.string = malloc(20);
+
+    int n, m;
+    for (n = 1, m = 0; n < strlen(buff) - 1; n++, m++) {
+      if (buff[n] == ' ' || buff[n] == ',') {
+        n++;
+        break;
+      }
+      struct_attr->attr.name[m] = buff[n];
+    }
+
+    for (m = 0; n < strlen(buff) - 1; n++, m++) {
+      if (buff[n] == ' ' || buff[n] == ',') {
+        n++;
+        break;
+      }
+      struct_attr->attr.val.string[m] = buff[n];
+    }
+
+    char *type = malloc(sizeof(buff));
+    for (m = 0; n < strlen(buff) - 1; n++, m++) {
+      if (buff[n] == ' ' || buff[n] == ',')
+        break;
+      type[m] = buff[n];
+    }
+    struct_attr->attr.type = get_type(type);
+  }
+  return struct_attr;
 }
 
 basic_attr *parse_file(FILE *data_file, int lines_passed) {
@@ -60,17 +108,18 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
         if (strcmp(buff, basic_command[PROGRAM]) == 0) {
           printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get("NULL", NUL);
+          return attr_get_type("NULL", NUL);
         } else if (lines_passed == PROGRAM) {
-          return attr_get((char *)basic_command[PROGRAM], ERR);
+          return attr_get_type((char *)basic_command[PROGRAM], ERR);
         }
 
         if (strcmp(buff, basic_command[VARIABLES]) == 0) {
           printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get("NULL", NUL);
+          return attr_get_all((char *)basic_command[VARIABLES], VAR, data_file,
+                              2);
         } else if (lines_passed == VARIABLES) {
-          return attr_get((char *)basic_command[VARIABLES], ERR);
+          return attr_get_type((char *)basic_command[VARIABLES], ERR);
         }
 
         /*if (strcmp(buff, basic_command[PARAMS]) == 0) {
@@ -129,12 +178,19 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
   for (int count_command = 0; count_command < 2; count_command++) {
-    basic_attr *attr = parse_file(file, count_command);
-    if (attr) {
-      switch (attr->type) {
+    basic_attr *struct_attr = parse_file(file, count_command);
+    if (struct_attr) {
+      switch (struct_attr->type) {
       case ERR:
-        printf("\n%sERORRE! Name attribute: '%s'%s\n", "\033[0;31m", attr->name,
-               "\033[0m");
+        printf("\n%sERORRE! Name attribute: '%s'%s\n", "\033[0;31m",
+               struct_attr->name, "\033[0m");
+        break;
+      case VAR:
+        printf("\n%s'Name: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+               "%s;]'%s\n",
+               "\033[0;38m", struct_attr->name, struct_attr->type,
+               struct_attr->attr.name, struct_attr->attr.type,
+               struct_attr->attr.val.string, "\033[0m");
         break;
       }
     } else {
