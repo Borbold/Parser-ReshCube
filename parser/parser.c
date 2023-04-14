@@ -5,25 +5,32 @@
 #include "stdlib.h"
 #include "string.h"
 
+#include "../types.h"
+
 #define DATA_FILE "./test/tests_scripts.txt"
 
 static void read_param(FILE *data_file);
 static void read_variable(FILE *data_file);
 static void read_constant(FILE *data_file);
 
-void main() {
+char *fill_out(char r_b, char *buff, int *r_count) {
+  if (r_b == ' ' || r_b == '\n') {
+    buff = malloc(64);
+    *r_count = 0;
+  } else {
+    buff[*r_count] = r_b;
+    *r_count += 1;
+  }
+  return buff;
+}
+
+void parse_file() {
   FILE *data_file = fopen(DATA_FILE, "r");
   int r_count = 0;
   char *buff = malloc(64);
   char r_b;
   while (fread(&r_b, 1, 1, data_file) > 0) {
-    if (r_b == ' ' || r_b == '\n') {
-      buff = malloc(64);
-      r_count = 0;
-    } else {
-      buff[r_count] = r_b;
-      r_count += 1;
-    }
+    buff = fill_out(r_b, buff, &r_count);
 
     for (int basic_count = 0;
          basic_count < sizeof(basic_command) / sizeof(basic_command[0]) - 1;
@@ -108,12 +115,32 @@ void main() {
   fclose(data_file);
 }
 
+void main() { parse_file(); }
+
+/* Make */
+void make_param(char *name, char *type) {
+  printf("Create param %s with type %s\n", name, type);
+}
+void make_variable(char *name, char *type) {
+  printf("Create variable %s with type %s\n", name, type);
+}
+void make_constant(char *name, char *type) {
+  printf("Create constant %s with type %s\n", name, type);
+}
+/* Make */
+
 /* Read */
 void read_param(FILE *data_file) {
   printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
-  char var[200];
-  fscanf((FILE *)data_file, "%s", var);
-  printf("%s\n", var);
+  int r_count = 0;
+  char *buff = malloc(64);
+  char r_b;
+  while (fread(&r_b, 1, 1, data_file) > 0) {
+    if (r_b == '\n')
+      break;
+    fill_out(r_b, buff, &r_count);
+  }
+  make_param(buff, "TYPE");
 }
 void read_variable(FILE *data_file) {
   printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
@@ -128,15 +155,3 @@ void read_constant(FILE *data_file) {
   printf("%s\n", var);
 }
 /* Read */
-
-/* Make */
-void make_param(char *name, char *type) {
-  printf("\nCreate param %s with type %s\n", name, type);
-}
-void make_variable(char *name, char *type) {
-  printf("\nCreate variable %s with type %s\n", name, type);
-}
-void make_constant(char *name, char *type) {
-  printf("\nCreate constant %s with type %s\n", name, type);
-}
-/* Make */

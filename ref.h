@@ -3,15 +3,15 @@
 
 /* This is used to determine the attribute types. */
 typedef enum {
-  INT,     /**< The database's integer type. */
-  STRING,  /**< The database's ASCII string / char type. */
-  DECIMAL, /**< The database's decimal type. */
+  INT, /**< The database's integer type. */
+  DEC, /**< The database's decimal type. */
+  STR, /**< The database's ASCII string / char type. */
 } attr_type;
 
 typedef enum {
-    VARIABLE,
-    PARAM,
-    CONSTANT,
+  VAR,
+  PAR,
+  CON,
 } param_type;
 
 /* Type size references */
