@@ -25,5 +25,4 @@ description: "Cбор магнитометрических и температу
 - payload_power: ["UMK",${keep_turn_on}]
 - payload_power: ["MKSOS",${keep_turn_on}]
 - payload_power: ["Flywheels",${keep_turn_on}]
-- exit:
-["SUCESSES"]
+- exit: ["SUCESSES"]

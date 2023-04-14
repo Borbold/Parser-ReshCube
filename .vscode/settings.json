@@ -33,7 +33,9 @@
         "dbinsert_check.h": "c",
         "dbparseexpr.h": "c",
         "dbupdate.h": "c",
-        "parser.h": "c"
+        "parser.h": "c",
+        "cstdlib": "c",
+        "new": "c"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll": true

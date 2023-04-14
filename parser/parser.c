@@ -2,6 +2,7 @@
 
 #include "stdint.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 
 #define DATA_FILE "./test/tests_scripts.txt"
@@ -12,8 +13,18 @@ static void read_constant(FILE *data_file);
 
 void main() {
   FILE *data_file = fopen(DATA_FILE, "r");
-  char buff[64];
-  while (fscanf((FILE *)data_file, "%s", buff) != EOF) {
+  int r_count = 0;
+  char *buff = malloc(64);
+  char r_b;
+  while (fread(&r_b, 1, 1, data_file) > 0) {
+    if (r_b == ' ' || r_b == '\n') {
+      buff = malloc(64);
+      r_count = 0;
+    } else {
+      buff[r_count] = r_b;
+      r_count += 1;
+    }
+
     for (int basic_count = 0;
          basic_count < sizeof(basic_command) / sizeof(basic_command[0]) - 1;
          basic_count++) {
@@ -93,6 +104,7 @@ void main() {
     }
   }
 
+  free(buff);
   fclose(data_file);
 }
 
