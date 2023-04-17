@@ -40,8 +40,8 @@ char *get_buff(FILE *file) {
   return buff;
 }
 
-basic_attr *attr_get_type(char *name, str_type type) {
-  basic_attr *struct_attr = malloc(sizeof(basic_attr));
+header_attr *attr_get_type(char *name, head_type type) {
+  header_attr *struct_attr = malloc(sizeof(header_attr));
   struct_attr->name = name;
   struct_attr->type = type;
   return struct_attr;
@@ -56,11 +56,11 @@ attr_type get_type(char *str) {
     return STR;
 }
 
-basic_attr *attr_get_all(char *name, str_type type, FILE *file) {
+header_attr *attr_get_all(char *name, head_type type, FILE *file) {
   get_buff(file);
   fpos_t pos;
   int count_var = 0;
-  basic_attr *struct_attr = malloc(sizeof(basic_attr));
+  header_attr *struct_attr = malloc(sizeof(header_attr));
   struct_attr->attribute = malloc(count_var * sizeof(attr));
   while (1) {
     fgetpos(file, &pos);
@@ -110,7 +110,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file) {
   return struct_attr;
 }
 
-basic_attr *parse_string(FILE *data_file, int lines_passed) {
+header_attr *parse_string(FILE *data_file, int lines_passed) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
@@ -124,9 +124,9 @@ basic_attr *parse_string(FILE *data_file, int lines_passed) {
         if (strcmp(buff, basic_command[PROGRAM]) == 0) {
           printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get_type("NULL", NUL);
+          return attr_get_type("NULL", NUL_H);
         } else if (lines_passed == PROGRAM) {
-          return attr_get_type((char *)basic_command[PROGRAM], ERR);
+          return attr_get_type((char *)basic_command[PROGRAM], ERR_H);
         }
 
         if (strcmp(buff, basic_command[VARIABLES]) == 0) {
@@ -134,7 +134,7 @@ basic_attr *parse_string(FILE *data_file, int lines_passed) {
           lines_passed++;
           return attr_get_all((char *)basic_command[VARIABLES], VAR, data_file);
         } else if (lines_passed == VARIABLES) {
-          return attr_get_type((char *)basic_command[VARIABLES], ERR);
+          return attr_get_type((char *)basic_command[VARIABLES], ERR_H);
         }
 
         if (strcmp(buff, basic_command[CONSTANT]) == 0) {
@@ -142,15 +142,15 @@ basic_attr *parse_string(FILE *data_file, int lines_passed) {
           lines_passed++;
           return attr_get_all((char *)basic_command[CONSTANT], CON, data_file);
         } else if (lines_passed == CONSTANT) {
-          return attr_get_type((char *)basic_command[CONSTANT], ERR);
+          return attr_get_type((char *)basic_command[CONSTANT], ERR_H);
         }
 
         if (strcmp(buff, basic_command[STEPS]) == 0) {
           printf("%sSteps exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get_type("NULL", NUL);
+          return attr_get_type("NULL", NUL_H);
         } else if (lines_passed == STEPS) {
-          return attr_get_type((char *)basic_command[STEPS], ERR);
+          return attr_get_type((char *)basic_command[STEPS], ERR_H);
         }
       }
     }
@@ -162,10 +162,10 @@ basic_attr *parse_string(FILE *data_file, int lines_passed) {
 }
 
 void parse_header(FILE *file, int c) {
-  basic_attr *struct_attr = parse_string(file, c);
+  header_attr *struct_attr = parse_string(file, c);
   if (struct_attr) {
     switch (struct_attr->type) {
-    case ERR:
+    case ERR_H:
       printf("\n%sERORRE! Name attribute: '%s'%s\n", "\033[0;31m",
              struct_attr->name, "\033[0m");
       break;
@@ -193,7 +193,18 @@ void parse_header(FILE *file, int c) {
   }
 }
 
-void parse_body(FILE *file, int c) {}
+void parse_body(FILE *file) {
+  int read_count = 0;
+  char *buff = malloc(LENGTH_BUFF), *pr;
+  char r_b;
+  while (fread(&r_b, 1, 1, file) > 0) {
+    pr = buff;
+    buff = fill_out(r_b, buff, &read_count);
+    if (read_count == 0) {
+      printf("\n%s\n", pr);
+    }
+  }
+}
 
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
@@ -202,9 +213,7 @@ void main() {
     parse_header(file, c);
   }
   // Парсим тело файла
-  for (int c = 0; c < sizeof(basic_string); c++) {
-    // parse_body(file, c);
-  }
+  parse_body(file);
 }
 
 /* Make */

@@ -15,9 +15,17 @@ typedef struct {
 
 typedef struct {
   char *name;
-  str_type type;
+  head_type type;
   attr *attribute;
   int num_attr;
-} basic_attr;
+} header_attr;
+
+typedef struct {
+  int number_line;
+  char *name;
+  body_type type;
+  attr *attribute;
+  int num_attr;
+} body_attr;
 
 #endif

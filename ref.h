@@ -11,11 +11,16 @@ typedef enum {
 typedef enum {
   VAR,
   CON,
+  ERR_H,
+  NUL_H,
+} head_type;
+
+typedef enum {
   FUN,
   TAG,
-  ERR,
-  NUL,
-} str_type;
+  ERR_B,
+  NUL_B,
+} body_type;
 
 /* Type size references */
 static const int SIZE_BYTE = sizeof(char);
