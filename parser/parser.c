@@ -34,7 +34,8 @@ char *get_buff(FILE *file) {
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '\n')
       break;
-    fill_out(r_b, buff, &read_count);
+    buff[read_count] = r_b;
+    read_count += 1;
   }
   return buff;
 }
@@ -67,27 +68,29 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
     struct_attr->attr.val.string = malloc(20);
 
     int n, m;
-    for (n = 1, m = 0; n < strlen(buff) - 1; n++, m++) {
+    for (n = 2, m = 0; n < strlen(buff) - 1; n++) {
       if (buff[n] == ' ' || buff[n] == ',') {
         n++;
         break;
+      } else {
+        struct_attr->attr.name[m++] = buff[n];
       }
-      struct_attr->attr.name[m] = buff[n];
     }
 
-    for (m = 0; n < strlen(buff) - 1; n++, m++) {
-      if (buff[n] == ' ' || buff[n] == ',') {
+    for (m = 0; n < strlen(buff) - 1; n++) {
+      if (buff[n] == ' ') {
         n++;
         break;
+      } else if (buff[n] != '[' && buff[n] != ',') {
+        struct_attr->attr.val.string[m++] = buff[n];
       }
-      struct_attr->attr.val.string[m] = buff[n];
     }
 
     char *type = malloc(sizeof(buff));
-    for (m = 0; n < strlen(buff) - 1; n++, m++) {
+    for (m = 0; n < strlen(buff) - 1; n++) {
       if (buff[n] == ' ' || buff[n] == ',')
         break;
-      type[m] = buff[n];
+      type[m++] = buff[n];
     }
     struct_attr->attr.type = get_type(type);
   }
@@ -117,55 +120,10 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
           printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
           return attr_get_all((char *)basic_command[VARIABLES], VAR, data_file,
-                              2);
+                              1);
         } else if (lines_passed == VARIABLES) {
           return attr_get_type((char *)basic_command[VARIABLES], ERR);
         }
-
-        /*if (strcmp(buff, basic_command[PARAMS]) == 0) {
-          printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
-        } else if (strcmp(buff, basic_command[VARIABLES]) == 0) {
-          printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
-        } else if (strcmp(buff, basic_command[START_TIME]) == 0) {
-          printf("%sStart time exist%s\n", "\033[1;33m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[CONSTANT]) == 0) {
-          printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
-        } else if (strcmp(buff, basic_command[LATITUDE]) == 0) {
-          printf("%sLATITUDE exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[LONGITUDE]) == 0) {
-          printf("%sLONGITUDE exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[STEPS]) == 0) {
-          printf("%sSteps exist. Send to run.%s\n", "\033[1;34m", "\033[0m");
-        } else if (strcmp(buff, basic_command[WAIT_COORDINATES]) == 0) {
-          printf("%sWAIT_COORDINATES exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[ORIENTATION]) == 0) {
-          printf("%sORIENTATION exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[PAYLOAD_POWER]) == 0) {
-          printf("%sPAYLOAD_POWER exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[WAIT]) == 0) {
-          printf("%sWait exist%s\n", "\033[1;35m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[CREATE_METER]) == 0) {
-          printf("%sCREATE_METER exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[ADD_CHANAL_METER]) == 0) {
-          printf("%sADD_CHANAL_METER exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[RUN_METER]) == 0) {
-          printf("%sRUN_METER exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[STOP_METER]) == 0) {
-          printf("%sSTOP_METER exist%s\n", "\033[1;34m", "\033[0m");
-          make_blank(get_buff(data_file));
-        } else if (strcmp(buff, basic_command[EXIT]) == 0) {
-          printf("%sEXIT exist%s\n", "\033[1;34m", "\033[0m");
-        }*/
       }
     }
   }

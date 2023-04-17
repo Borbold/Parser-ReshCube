@@ -10,7 +10,6 @@ typedef enum {
 
 typedef enum {
   VAR,
-  PAR,
   CON,
   FUN,
   TAG,

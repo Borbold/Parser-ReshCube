@@ -1,11 +1,8 @@
 program:
 name: "experiment_Brazilian_magnetic_anomaly"
 description: "Cбор магнитометрических и температурных данных"
-params: ["period","averaging_factor","running_time","target_orientation",start_conditions,"keep_turn_on"]
 variables:
-    [period,5,INT]
-    [averaging_factor,2,INT]
-- start_time: ["integer"]
+- start_time: [35472, INT]
 constant: #секция_объявления_констант
 - latitude: ["41.40338",DECIMAL]
 - longitude: ["2.17403",DECIMAL]
