@@ -56,18 +56,25 @@ attr_type get_type(char *str) {
     return STR;
 }
 
-basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
+basic_attr *attr_get_all(char *name, str_type type, FILE *file) {
   get_buff(file);
+  fpos_t pos;
+  int count_var = 0;
   basic_attr *struct_attr = malloc(sizeof(basic_attr));
-  struct_attr->num_attr = count_var;
   struct_attr->attribute = malloc(count_var * sizeof(attr));
-  for (int i = 0; i < count_var; i++) {
+  while (1) {
+    fgetpos(file, &pos);
     char *buff = get_buff(file);
+    if (buff[0] != '-') {
+      fsetpos(file, &pos);
+      break;
+    }
+
     struct_attr->name = name;
     struct_attr->type = type;
 
-    struct_attr->attribute[i].name = malloc(20);
-    struct_attr->attribute[i].val.string = malloc(20);
+    struct_attr->attribute[count_var].name = malloc(20);
+    struct_attr->attribute[count_var].val.string = malloc(20);
 
     int n, m;
     for (n = 2, m = 0; n < strlen(buff) - 1; n++) {
@@ -75,7 +82,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         n += 2;
         break;
       } else {
-        struct_attr->attribute[i].name[m++] = buff[n];
+        struct_attr->attribute[count_var].name[m++] = buff[n];
       }
     }
 
@@ -84,7 +91,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         n++;
         break;
       } else if (buff[n] != '[' && buff[n] != ',') {
-        struct_attr->attribute[i].val.string[m++] = buff[n];
+        struct_attr->attribute[count_var].val.string[m++] = buff[n];
       }
     }
 
@@ -96,12 +103,14 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         type[m++] = buff[n];
       }
     }
-    struct_attr->attribute[i].type = get_type(type);
+    struct_attr->attribute[count_var].type = get_type(type);
+    count_var++;
   }
+  struct_attr->num_attr = count_var;
   return struct_attr;
 }
 
-basic_attr *parse_file(FILE *data_file, int lines_passed) {
+basic_attr *parse_header(FILE *data_file, int lines_passed) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
@@ -123,8 +132,7 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
         if (strcmp(buff, basic_command[VARIABLES]) == 0) {
           printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get_all((char *)basic_command[VARIABLES], VAR, data_file,
-                              1);
+          return attr_get_all((char *)basic_command[VARIABLES], VAR, data_file);
         } else if (lines_passed == VARIABLES) {
           return attr_get_type((char *)basic_command[VARIABLES], ERR);
         }
@@ -132,8 +140,7 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
         if (strcmp(buff, basic_command[CONSTANT]) == 0) {
           printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
-          return attr_get_all((char *)basic_command[CONSTANT], CON, data_file,
-                              2);
+          return attr_get_all((char *)basic_command[CONSTANT], CON, data_file);
         } else if (lines_passed == CONSTANT) {
           return attr_get_type((char *)basic_command[CONSTANT], ERR);
         }
@@ -148,8 +155,9 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
 
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
-  for (int c = 0; c < 3; c++) {
-    basic_attr *struct_attr = parse_file(file, c);
+  // Парсим заголовок файла
+  for (int c = 0; c < sizeof(basic_string) - 1; c++) {
+    basic_attr *struct_attr = parse_header(file, c);
     if (struct_attr) {
       switch (struct_attr->type) {
       case ERR:
