@@ -157,11 +157,13 @@ void main() {
                struct_attr->name, "\033[0m");
         break;
       case VAR:
-        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
-               "%s;]%s\n",
-               "\033[0;38m", struct_attr->name, struct_attr->type,
-               struct_attr->attribute->name, struct_attr->attribute->type,
-               struct_attr->attribute->val.string, "\033[0m");
+        for (int i = 0; i < struct_attr->num_attr; i++) {
+          printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+                 "%s;]%s\n",
+                 "\033[0;38m", struct_attr->name, struct_attr->type,
+                 struct_attr->attribute[i].name, struct_attr->attribute[i].type,
+                 struct_attr->attribute[i].val.string, "\033[0m");
+        }
         break;
       case CON:
         for (int i = 0; i < struct_attr->num_attr; i++) {
