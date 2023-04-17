@@ -69,8 +69,8 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
 
     int n, m;
     for (n = 2, m = 0; n < strlen(buff) - 1; n++) {
-      if (buff[n] == ' ' || buff[n] == ',') {
-        n++;
+      if (buff[n] == ':') {
+        n += 2;
         break;
       } else {
         struct_attr->attr.name[m++] = buff[n];
@@ -88,9 +88,11 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
 
     char *type = malloc(sizeof(buff));
     for (m = 0; n < strlen(buff) - 1; n++) {
-      if (buff[n] == ' ' || buff[n] == ',')
+      if (buff[n] == ']') {
         break;
-      type[m++] = buff[n];
+      } else {
+        type[m++] = buff[n];
+      }
     }
     struct_attr->attr.type = get_type(type);
   }
@@ -144,8 +146,8 @@ void main() {
                struct_attr->name, "\033[0m");
         break;
       case VAR:
-        printf("\n%s'Name: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
-               "%s;]'%s\n",
+        printf("\n%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+               "%s;]%s\n",
                "\033[0;38m", struct_attr->name, struct_attr->type,
                struct_attr->attr.name, struct_attr->attr.type,
                struct_attr->attr.val.string, "\033[0m");
