@@ -126,6 +126,15 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
         } else if (lines_passed == VARIABLES) {
           return attr_get_type((char *)basic_command[VARIABLES], ERR);
         }
+
+        if (strcmp(buff, basic_command[CONSTANT]) == 0) {
+          printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
+          lines_passed++;
+          return attr_get_all((char *)basic_command[CONSTANT], CON, data_file,
+                              1);
+        } else if (lines_passed == CONSTANT) {
+          return attr_get_type((char *)basic_command[CONSTANT], ERR);
+        }
       }
     }
   }
@@ -137,7 +146,7 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
 
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
-  for (int count_command = 0; count_command < 2; count_command++) {
+  for (int count_command = 0; count_command < 3; count_command++) {
     basic_attr *struct_attr = parse_file(file, count_command);
     if (struct_attr) {
       switch (struct_attr->type) {
@@ -146,7 +155,14 @@ void main() {
                struct_attr->name, "\033[0m");
         break;
       case VAR:
-        printf("\n%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+               "%s;]%s\n",
+               "\033[0;38m", struct_attr->name, struct_attr->type,
+               struct_attr->attr.name, struct_attr->attr.type,
+               struct_attr->attr.val.string, "\033[0m");
+        break;
+      case CON:
+        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
                "%s;]%s\n",
                "\033[0;38m", struct_attr->name, struct_attr->type,
                struct_attr->attr.name, struct_attr->attr.type,

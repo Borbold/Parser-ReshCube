@@ -4,8 +4,8 @@ description: "Cбор магнитометрических и температу
 variables:
 - start_time: [35472, INT]
 constant: #секция_объявления_констант
-- latitude: ["41.40338",DECIMAL]
-- longitude: ["2.17403",DECIMAL]
+- latitude: [41.40338, DEC]
+- longitude: [2.17403, DEC]
 
 steps: #начало_скрипта
 - wait_coordinates: ["latitude",longitude]_#ждём_условие_входа_в_бразильскую_аномалию
