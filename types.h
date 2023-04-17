@@ -5,18 +5,19 @@
 
 typedef struct {
   char *name;
+  attr_type type;
+  union {
+    int integer;
+    float decimal;
+    char *string;
+  } val;
+} attr;
+
+typedef struct {
+  char *name;
   str_type type;
-  struct {
-    char *name;
-    attr_type type;
-    union {
-      int integer;
-      float decimal;
-      char *string;
-    } val;
-  } attr;
-  int offset;
-  int length;
+  attr *attribute;
+  int num_attr;
 } basic_attr;
 
 #endif

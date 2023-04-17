@@ -59,13 +59,15 @@ attr_type get_type(char *str) {
 basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
   get_buff(file);
   basic_attr *struct_attr = malloc(sizeof(basic_attr));
+  struct_attr->num_attr = count_var;
+  struct_attr->attribute = malloc(count_var * sizeof(attr));
   for (int i = 0; i < count_var; i++) {
     char *buff = get_buff(file);
     struct_attr->name = name;
     struct_attr->type = type;
 
-    struct_attr->attr.name = malloc(20);
-    struct_attr->attr.val.string = malloc(20);
+    struct_attr->attribute[i].name = malloc(20);
+    struct_attr->attribute[i].val.string = malloc(20);
 
     int n, m;
     for (n = 2, m = 0; n < strlen(buff) - 1; n++) {
@@ -73,7 +75,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         n += 2;
         break;
       } else {
-        struct_attr->attr.name[m++] = buff[n];
+        struct_attr->attribute[i].name[m++] = buff[n];
       }
     }
 
@@ -82,7 +84,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         n++;
         break;
       } else if (buff[n] != '[' && buff[n] != ',') {
-        struct_attr->attr.val.string[m++] = buff[n];
+        struct_attr->attribute[i].val.string[m++] = buff[n];
       }
     }
 
@@ -94,7 +96,7 @@ basic_attr *attr_get_all(char *name, str_type type, FILE *file, int count_var) {
         type[m++] = buff[n];
       }
     }
-    struct_attr->attr.type = get_type(type);
+    struct_attr->attribute[i].type = get_type(type);
   }
   return struct_attr;
 }
@@ -131,7 +133,7 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
           printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
           lines_passed++;
           return attr_get_all((char *)basic_command[CONSTANT], CON, data_file,
-                              1);
+                              2);
         } else if (lines_passed == CONSTANT) {
           return attr_get_type((char *)basic_command[CONSTANT], ERR);
         }
@@ -146,8 +148,8 @@ basic_attr *parse_file(FILE *data_file, int lines_passed) {
 
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
-  for (int count_command = 0; count_command < 3; count_command++) {
-    basic_attr *struct_attr = parse_file(file, count_command);
+  for (int c = 0; c < 3; c++) {
+    basic_attr *struct_attr = parse_file(file, c);
     if (struct_attr) {
       switch (struct_attr->type) {
       case ERR:
@@ -158,15 +160,17 @@ void main() {
         printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
                "%s;]%s\n",
                "\033[0;38m", struct_attr->name, struct_attr->type,
-               struct_attr->attr.name, struct_attr->attr.type,
-               struct_attr->attr.val.string, "\033[0m");
+               struct_attr->attribute->name, struct_attr->attribute->type,
+               struct_attr->attribute->val.string, "\033[0m");
         break;
       case CON:
-        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
-               "%s;]%s\n",
-               "\033[0;38m", struct_attr->name, struct_attr->type,
-               struct_attr->attr.name, struct_attr->attr.type,
-               struct_attr->attr.val.string, "\033[0m");
+        for (int i = 0; i < struct_attr->num_attr; i++) {
+          printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+                 "%s;]%s\n",
+                 "\033[0;38m", struct_attr->name, struct_attr->type,
+                 struct_attr->attribute[i].name, struct_attr->attribute[i].type,
+                 struct_attr->attribute[i].val.string, "\033[0m");
+        }
         break;
       }
     } else {
