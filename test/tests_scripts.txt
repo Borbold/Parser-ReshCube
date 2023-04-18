@@ -8,17 +8,18 @@ constant: #секция_объявления_констант
 - longitude: [2.17403, DEC]
 
 steps: #начало_скрипта
-- wait_coordinates: ["latitude", longitude] #ждём_условие_входа_в_бразильскую_аномалию
-- orientation: ["${target_orientation}"] #ждём_ориентации_аппарата
+- wait_coordinates: ["latitude", "longitude"] #ждём_условие_входа_в_бразильскую_аномалию
+- orientation: [${target_orientation}] #ждём_ориентации_аппарата
 - start_time: ["c_get_time()"] #запоминаем_время_старта_эксперимента
-- payload_power: ["Magnetometer", "true"] #включаем_питание
-- payload_power: ["Giroscope", "true"]
+- payload_power: ["Magnetometer", true] #включаем_питание
+- payload_power: ["Giroscope", true]
 - wait: ["120"]
+marker: [marker1]
 - create_meter: ["B_A"]
 - add_chanal_meter: ["B_A", "Magnetometer", ${period}, ${averaging_factor}]
 - add_chanal_meter: ["B_A", "Giroscope", ${period}, ${averaging_factor}]
 - run_meter: ["B_A"]
-- wait: ["${period} + start_time"]
+- wait: [${period} + "start_time"]
 - stop_meter: ["B_A"]
 - payload_power: ["motherboard", ${keep_turn_on}] #включаем_питание
 - payload_power: ["UMK", ${keep_turn_on}]
