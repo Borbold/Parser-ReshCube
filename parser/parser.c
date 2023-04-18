@@ -169,14 +169,23 @@ parser_state *init_parser(FILE *file, int number_line) {
 }
 
 parser_result *parse_body(FILE *file, int number_line) {
+  parser_result *struct_attr = malloc(sizeof(parser_result));
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
   while (fread(&r_b, 1, 1, file) > 0) {
-    buff = fill_out(r_b, buff, &read_count);
-
-    if (r_b == '-')
+    if (r_b == '-') {
+      char *name;
+      struct_attr->type = FUN;
+      buff = get_string(file);
+      int i = 1;
+      for (; i < strlen(buff); i++)
+        if (buff[i] == ':')
+          break;
+      strncpy(name, buff, i);
+      struct_attr->name = name;
       printf("%s\n", buff);
+    }
   }
 
   free(buff);
@@ -229,7 +238,7 @@ void main() {
   get_string(file);
 
   // Парсим строку из тела файла
-  read_string(file, 2);
+  read_string(file, 3);
 }
 
 /* Make */
