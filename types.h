@@ -5,27 +5,27 @@
 
 typedef struct {
   char *name;
-  attr_type type;
+  attribute_type type;
   union {
     int integer;
     float decimal;
     char *string;
   } val;
-} attr;
+} attribute;
 
 typedef struct {
   char *name;
   head_type type;
-  attr *attribute;
+  attribute *attribute;
   int num_attr;
-} header_attr;
+} parser_state;
 
 typedef struct {
   int number_line;
   char *name;
   body_type type;
-  attr *attribute;
+  attribute *attribute;
   int num_attr;
-} body_attr;
+} parser_result;
 
 #endif

@@ -6,7 +6,7 @@ typedef enum {
   INT, /**< The database's integer type. */
   DEC, /**< The database's decimal type. */
   STR, /**< The database's ASCII string / char type. */
-} attr_type;
+} attribute_type;
 
 typedef enum {
   VAR,
