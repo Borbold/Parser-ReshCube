@@ -110,7 +110,7 @@ parser_state *attr_get_all(char *name, head_type type, FILE *file) {
   return struct_attr;
 }
 
-parser_state *parse_string(FILE *data_file, int number_line) {
+parser_state *parse_header(FILE *data_file, int number_line) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
@@ -161,8 +161,8 @@ parser_state *parse_string(FILE *data_file, int number_line) {
   return NULL;
 }
 
-void init_parser(FILE *file, int number_line) {
-  parser_state *struct_attr = parse_string(file, number_line);
+parser_state *init_parser(FILE *file, int number_line) {
+  parser_state *struct_attr = parse_header(file, number_line);
   if (struct_attr) {
     switch (struct_attr->type) {
     case ERR_H:
@@ -191,9 +191,10 @@ void init_parser(FILE *file, int number_line) {
   } else {
     printf("\n%sERORRE! Attribute is NULL!%s\n", "\033[0;31m", "\033[0m");
   }
+  return struct_attr;
 }
 
-void read_string(FILE *file, int number_line) {
+parser_result *read_string(FILE *file, int number_line) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF), *pr;
   char r_b;
@@ -209,8 +210,9 @@ void read_string(FILE *file, int number_line) {
 void main() {
   FILE *file = fopen(DATA_FILE, "r");
   // Парсим заголовок файла
+  parser_state *struct_attr;
   for (int c = 0; c < sizeof(basic_string); c++) {
-    init_parser(file, c);
+    struct_attr = init_parser(file, c);
   }
   // Парсим тело файла
   read_string(file, 1);
