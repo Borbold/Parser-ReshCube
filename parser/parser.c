@@ -29,7 +29,7 @@ char *fill_out(char r_b, char *buff, int *read_count) {
 }
 
 // Получить целую строку
-char *get_buff(FILE *file) {
+char *get_string(FILE *file) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
@@ -59,14 +59,14 @@ attribute_type get_type(char *str) {
 }
 
 parser_state *attr_get_all(char *name, head_type type, FILE *file) {
-  get_buff(file);
+  get_string(file);
   fpos_t pos;
   int count_var = 0;
   parser_state *struct_attr = malloc(sizeof(parser_state));
   struct_attr->attribute = malloc(count_var * sizeof(attribute));
   while (1) {
     fgetpos(file, &pos);
-    char *buff = get_buff(file);
+    char *buff = get_string(file);
     if (buff[0] != '-') {
       fsetpos(file, &pos);
       break;
@@ -197,15 +197,13 @@ parser_state *init_parser(FILE *file, int number_line) {
 }
 
 parser_result *read_string(FILE *file, int number_line) {
-  int read_count = 0;
-  char *buff = malloc(LENGTH_BUFF), *pr;
-  char r_b;
-  while (fread(&r_b, 1, 1, file) > 0) {
-    pr = buff;
-    buff = fill_out(r_b, buff, &read_count);
-    if (read_count == 0) {
-      printf("\n%s\n", pr);
-    }
+  char *buff = malloc(LENGTH_BUFF);
+  printf("\n");
+  while (1) {
+    buff = get_string(file);
+    if (strlen(buff) <= 0)
+      break;
+    printf("%s\n", buff);
   }
 }
 
@@ -236,15 +234,15 @@ void make_blank(char *name) { printf("%s\n", name); }
 /* Read */
 void read_param(FILE *data_file) {
   printf("%sParams exist%s\n", "\033[1;34m", "\033[0m");
-  make_param(get_buff(data_file), "TYPE");
+  make_param(get_string(data_file), "TYPE");
 }
 void read_variable(FILE *data_file) {
   printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
-  make_param(get_buff(data_file), "TYPE");
+  make_param(get_string(data_file), "TYPE");
 }
 void read_constant(FILE *data_file) {
   printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
-  make_param(get_buff(data_file), "TYPE");
+  make_param(get_string(data_file), "TYPE");
 }
 /* Read */
 

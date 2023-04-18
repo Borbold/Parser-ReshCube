@@ -35,7 +35,8 @@
         "dbupdate.h": "c",
         "parser.h": "c",
         "cstdlib": "c",
-        "new": "c"
+        "new": "c",
+        "stdlib.h": "c"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll": true
