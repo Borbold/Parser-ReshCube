@@ -16,6 +16,7 @@ static void read_constant(FILE *data_file);
 
 static void make_blank(char *name);
 
+// Получить целое слово
 char *fill_out(char r_b, char *buff, int *read_count) {
   if (r_b == ' ' || r_b == '\n') {
     buff = malloc(LENGTH_BUFF);
@@ -27,6 +28,7 @@ char *fill_out(char r_b, char *buff, int *read_count) {
   return buff;
 }
 
+// Получить целую строку
 char *get_buff(FILE *file) {
   int read_count = 0;
   char *buff = malloc(LENGTH_BUFF);
