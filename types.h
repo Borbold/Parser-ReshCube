@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
   char *name;
-  head_type type;
+  state_type type;
   attribute *attribute;
   int num_attr;
 } parser_state;
@@ -23,7 +23,7 @@ typedef struct {
 typedef struct {
   int number_line;
   char *name;
-  body_type type;
+  result_type type;
   attribute *attribute;
   int num_attr;
 } parser_result;

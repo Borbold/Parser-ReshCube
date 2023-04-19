@@ -42,7 +42,7 @@ char *get_string(FILE *file) {
   return buff;
 }
 
-parser_state *attr_get_type(char *name, head_type type) {
+parser_state *attr_get_type(char *name, state_type type) {
   parser_state *struct_attr = malloc(sizeof(parser_state));
   struct_attr->name = name;
   struct_attr->type = type;
@@ -58,7 +58,7 @@ attribute_type get_type(char *str) {
     return STR;
 }
 
-parser_state *attr_get_state(char *name, head_type type, FILE *file) {
+parser_state *attr_get_state(char *name, state_type type, FILE *file) {
   get_string(file);
   fpos_t pos;
   int count_var = 0;
@@ -168,39 +168,56 @@ parser_state *init_parser(FILE *file, int number_line) {
   return struct_attr;
 }
 
-parser_result *attr_get_result(char *name, head_type type, FILE *file) {
-  get_string(file);
-  fpos_t pos;
+parser_result *attr_get_result(state_type type, FILE *file, int number_line) {
+  char *buff = malloc(LENGTH_BUFF);
+  buff = get_string(file);
   int count_var = 0;
   parser_result *struct_attr = malloc(sizeof(parser_result));
   struct_attr->attribute = malloc(count_var * sizeof(attribute));
 
+  int i = 1;
+  for (; i < strlen(buff); i++)
+    if (buff[i] == ':')
+      break;
+  char *name = malloc(i);
+  for (int j = 0; j < i - 1; j++)
+    name[j] = buff[j + 1];
+
+  struct_attr->name = name;
+  struct_attr->type = type;
+  struct_attr->number_line = number_line;
+
+  i += 1;
+  for (; i < strlen(buff); i++) {
+    if (buff[i] == '[')
+      break;
+  }
+  char *attr = malloc(25);
+  for (int j = 0; j < strlen(buff); j++) {
+    if (buff[i + j + 1] == ',' || buff[i + j + 1] == ']')
+      break;
+    attr[j] = buff[i + j + 1];
+  }
+
+  printf("%s\n", attr);
+
   struct_attr->num_attr = count_var;
+  free(buff);
+  free(attr);
   return struct_attr;
 }
 
 parser_result *parse_body(FILE *file, int number_line) {
-  parser_result *struct_attr = malloc(sizeof(parser_result));
   int read_count = 0;
-  char *buff = malloc(LENGTH_BUFF);
   char r_b;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '-') {
-      buff = get_string(file);
-      int i = 1;
-      for (; i < strlen(buff); i++)
-        if (buff[i] == ':')
-          break;
-      char *name;
-      strncpy(name, buff, i);
-      struct_attr->number_line = number_line;
-      attr_get_result(name, FUN, file);
-
-      printf("%s\n", buff);
+      read_count++;
+      // if (number_line == read_count)
+      attr_get_result(FUN, file, number_line);
     }
   }
 
-  free(buff);
   fclose(file);
   return NULL;
 }
