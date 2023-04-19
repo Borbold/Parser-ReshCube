@@ -14,7 +14,7 @@ steps: #начало_скрипта
 - payload_power: ["Magnetometer", true] #включаем_питание
 - payload_power: ["Giroscope", true]
 - wait: ["120"]
-marker: [marker1]
+- set_marker: [marker1]
 - create_meter: ["B_A"]
 - add_chanal_meter: ["B_A", "Magnetometer", ${period}, ${averaging_factor}]
 - add_chanal_meter: ["B_A", "Giroscope", ${period}, ${averaging_factor}]

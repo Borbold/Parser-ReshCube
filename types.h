@@ -7,8 +7,6 @@ typedef struct {
   char *name;
   attribute_type type;
   union {
-    int integer;
-    float decimal;
     char *string;
   } val;
 } attribute;

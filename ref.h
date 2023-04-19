@@ -9,6 +9,12 @@ typedef enum {
 } attribute_type;
 
 typedef enum {
+  NAME,
+  CON_A,
+  NUL_A,
+} parse_attr_type;
+
+typedef enum {
   VAR,
   CON,
   ERR_H,
@@ -17,7 +23,6 @@ typedef enum {
 
 typedef enum {
   FUN,
-  TAG,
   ERR_B,
   NUL_B,
 } result_type;

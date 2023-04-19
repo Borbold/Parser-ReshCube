@@ -87,6 +87,8 @@ parser_state *attr_get_state(char *name, state_type type, FILE *file) {
         struct_attr->attribute[count_var].name[m++] = buff[n];
       }
     }
+    struct_attr->attribute[count_var]
+        .name[strlen(struct_attr->attribute[count_var].name)] = '\0';
 
     for (m = 0; n < strlen(buff) - 1; n++) {
       if (buff[n] == ' ') {
@@ -96,6 +98,9 @@ parser_state *attr_get_state(char *name, state_type type, FILE *file) {
         struct_attr->attribute[count_var].val.string[m++] = buff[n];
       }
     }
+    struct_attr->attribute[count_var]
+        .val.string[strlen(struct_attr->attribute[count_var].val.string)] =
+        '\0';
 
     char *type = malloc(sizeof(buff));
     for (m = 0; n < strlen(buff) - 1; n++) {
@@ -165,6 +170,34 @@ parser_state *parse_header(FILE *file, int number_line) {
 
 parser_state *init_parser(FILE *file, int number_line) {
   parser_state *struct_attr = parse_header(file, number_line);
+  if (struct_attr) {
+    switch (struct_attr->type) {
+    case ERR_H:
+      printf("\n%sERORRE! Name attribute: '%s'%s\n", "\033[0;31m",
+             struct_attr->name, "\033[0m");
+      break;
+    case VAR:
+      for (int i = 0; i < struct_attr->num_attr; i++) {
+        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+               "%s;]%s\n",
+               "\033[1;36m", struct_attr->name, struct_attr->type,
+               struct_attr->attribute[i].name, struct_attr->attribute[i].type,
+               struct_attr->attribute[i].val.string, "\033[0m");
+      }
+      break;
+    case CON:
+      for (int i = 0; i < struct_attr->num_attr; i++) {
+        printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
+               "%s;]%s\n",
+               "\033[1;36m", struct_attr->name, struct_attr->type,
+               struct_attr->attribute[i].name, struct_attr->attribute[i].type,
+               struct_attr->attribute[i].val.string, "\033[0m");
+      }
+      break;
+    }
+  } else {
+    printf("\n%sERORRE! Attribute is NULL!%s\n", "\033[0;31m", "\033[0m");
+  }
   return struct_attr;
 }
 
@@ -182,6 +215,7 @@ parser_result *attr_get_result(state_type type, FILE *file, int number_line) {
   char *name = malloc(i);
   for (int j = 0; j < i - 1; j++)
     name[j] = buff[j + 1];
+  name[strlen(name)] = '\0';
 
   struct_attr->name = name;
   struct_attr->type = type;
@@ -193,13 +227,19 @@ parser_result *attr_get_result(state_type type, FILE *file, int number_line) {
       break;
   }
   char *attr = malloc(25);
-  for (int j = 0; j < strlen(buff); j++) {
-    if (buff[i + j + 1] == ',' || buff[i + j + 1] == ']')
+  for (int j = 0, k = 0; j < strlen(buff); j++, k++) {
+    if (buff[i + j + 1] == ']') {
+      struct_attr->attribute[count_var].name = attr;
       break;
-    attr[j] = buff[i + j + 1];
+    } else if (buff[i + j + 1] == ',') {
+      struct_attr->attribute[count_var].name = attr;
+      count_var++;
+      k = 0;
+      j += 2;
+      attr = malloc(25);
+    }
+    attr[k] = buff[i + j + 1];
   }
-
-  printf("%s\n", attr);
 
   struct_attr->num_attr = count_var;
   free(buff);
@@ -207,24 +247,26 @@ parser_result *attr_get_result(state_type type, FILE *file, int number_line) {
   return struct_attr;
 }
 
-parser_result *parse_body(FILE *file, int number_line) {
-  int read_count = 0;
+parser_result *read_string(FILE *file) {
+  parser_result *struct_res;
+  int count_line = 0;
   char r_b;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '-') {
-      read_count++;
-      // if (number_line == read_count)
-      attr_get_result(FUN, file, number_line);
+      count_line++;
+      struct_res = attr_get_result(FUN, file, count_line);
+      printf("Name: %s;\tType: %d; Num_attr: %d; [", struct_res->name,
+             struct_res->type, struct_res->num_attr);
+      for (int i = 0; i <= struct_res->num_attr; i++) {
+        printf("Name: %s;", struct_res->attribute[i].name);
+        if (i < struct_res->num_attr)
+          printf(" ");
+      }
+      printf("]\n");
     }
   }
-
   fclose(file);
-  return NULL;
-}
-
-parser_result *read_string(FILE *file, int number_line) {
-  parser_result *struct_attr = parse_body(file, number_line);
-  return struct_attr;
+  return struct_res;
 }
 
 void main() {
@@ -233,41 +275,13 @@ void main() {
   parser_state *struct_attr;
   for (int c = 0; c < sizeof(basic_string); c++) {
     struct_attr = init_parser(file, c);
-
-    if (struct_attr) {
-      switch (struct_attr->type) {
-      case ERR_H:
-        printf("\n%sERORRE! Name attribute: '%s'%s\n", "\033[0;31m",
-               struct_attr->name, "\033[0m");
-        break;
-      case VAR:
-        for (int i = 0; i < struct_attr->num_attr; i++) {
-          printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
-                 "%s;]%s\n",
-                 "\033[1;36m", struct_attr->name, struct_attr->type,
-                 struct_attr->attribute[i].name, struct_attr->attribute[i].type,
-                 struct_attr->attribute[i].val.string, "\033[0m");
-        }
-        break;
-      case CON:
-        for (int i = 0; i < struct_attr->num_attr; i++) {
-          printf("%sName: %s; Type: %d; Attribute[Name: %s; Type: %d; Val: "
-                 "%s;]%s\n",
-                 "\033[1;36m", struct_attr->name, struct_attr->type,
-                 struct_attr->attribute[i].name, struct_attr->attribute[i].type,
-                 struct_attr->attribute[i].val.string, "\033[0m");
-        }
-        break;
-      }
-    } else {
-      printf("\n%sERORRE! Attribute is NULL!%s\n", "\033[0;31m", "\033[0m");
-    }
   }
 
   get_string(file);
 
   // Парсим строку из тела файла
-  read_string(file, 3);
+  parser_result *struct_res;
+  struct_res = read_string(file);
 }
 
 /* Make */
