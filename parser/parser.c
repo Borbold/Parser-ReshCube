@@ -58,7 +58,7 @@ attribute_type get_type(char *str) {
     return STR;
 }
 
-parser_state *attr_get_all(char *name, head_type type, FILE *file) {
+parser_state *attr_get_state(char *name, head_type type, FILE *file) {
   get_string(file);
   fpos_t pos;
   int count_var = 0;
@@ -117,7 +117,7 @@ parser_state *parse_header(FILE *file, int number_line) {
   char *buff = malloc(LENGTH_BUFF);
   char r_b;
   while (fread(&r_b, 1, 1, file) > 0) {
-    buff = fill_out(r_b, buff, &read_count);
+    buff = get_word(r_b, buff, &read_count);
 
     for (int basic_count = number_line;
          basic_count < sizeof(basic_command) / sizeof(basic_command[0]) - 1;
@@ -134,7 +134,7 @@ parser_state *parse_header(FILE *file, int number_line) {
         if (strcmp(buff, basic_command[VARIABLES]) == 0) {
           printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
           number_line++;
-          return attr_get_all((char *)basic_command[VARIABLES], VAR, file);
+          return attr_get_state((char *)basic_command[VARIABLES], VAR, file);
         } else if (number_line == VARIABLES) {
           return attr_get_type((char *)basic_command[VARIABLES], ERR_H);
         }
@@ -142,7 +142,7 @@ parser_state *parse_header(FILE *file, int number_line) {
         if (strcmp(buff, basic_command[CONSTANT]) == 0) {
           printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
           number_line++;
-          return attr_get_all((char *)basic_command[CONSTANT], CON, file);
+          return attr_get_state((char *)basic_command[CONSTANT], CON, file);
         } else if (number_line == CONSTANT) {
           return attr_get_type((char *)basic_command[CONSTANT], ERR_H);
         }
@@ -168,6 +168,17 @@ parser_state *init_parser(FILE *file, int number_line) {
   return struct_attr;
 }
 
+parser_result *attr_get_result(char *name, head_type type, FILE *file) {
+  get_string(file);
+  fpos_t pos;
+  int count_var = 0;
+  parser_result *struct_attr = malloc(sizeof(parser_result));
+  struct_attr->attribute = malloc(count_var * sizeof(attribute));
+
+  struct_attr->num_attr = count_var;
+  return struct_attr;
+}
+
 parser_result *parse_body(FILE *file, int number_line) {
   parser_result *struct_attr = malloc(sizeof(parser_result));
   int read_count = 0;
@@ -175,17 +186,17 @@ parser_result *parse_body(FILE *file, int number_line) {
   char r_b;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '-') {
-      char *name;
-      struct_attr->type = FUN;
       buff = get_string(file);
       int i = 1;
       for (; i < strlen(buff); i++)
         if (buff[i] == ':')
           break;
+      char *name;
       strncpy(name, buff, i);
-      struct_attr->name = name;
-      printf("%s\n", buff);
       struct_attr->number_line = number_line;
+      attr_get_result(name, FUN, file);
+
+      printf("%s\n", buff);
     }
   }
 
@@ -273,3 +284,20 @@ void read_constant(FILE *data_file) {
 /*Run*/
 void send_run() { printf("Send to run\n"); }
 /*Run*/
+
+/*Free*/
+void free_state(parser_state *s) {
+  for (int i = 0; i < s->num_attr; i++) {
+    free(s[i].attribute);
+  }
+  free(s->attribute);
+  free(s);
+}
+void free_result(parser_result *s) {
+  for (int i = 0; i < s->num_attr; i++) {
+    free(s[i].attribute);
+  }
+  free(s->attribute);
+  free(s);
+}
+/*Free*/
