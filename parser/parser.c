@@ -17,7 +17,7 @@ static void read_constant(FILE *data_file);
 static void make_blank(char *name);
 
 // Получить целое слово
-char *fill_out(char r_b, char *buff, int *read_count) {
+char *get_word(char r_b, char *buff, int *read_count) {
   if (r_b == ' ' || r_b == '\n') {
     buff = malloc(LENGTH_BUFF);
     *read_count = 0;
@@ -185,6 +185,7 @@ parser_result *parse_body(FILE *file, int number_line) {
       strncpy(name, buff, i);
       struct_attr->name = name;
       printf("%s\n", buff);
+      struct_attr->number_line = number_line;
     }
   }
 
