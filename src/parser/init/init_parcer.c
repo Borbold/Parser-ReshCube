@@ -45,7 +45,6 @@ parser_init *init_parser(char *path) {
   }
 
   free(buff);
-  fclose(file);
   return struct_init;
 }
 

@@ -15,9 +15,9 @@ constant: # секция объявления констант
 - target_orientation_z: ["0.5"]
 
 steps:  # начало скрипта
-- wait_coordinates: [${latitude},${longitude}] # ждём условие входа в бразильскую аномалию
-- orientation:   [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}] # ждём ориентации аппарата
-- get_time:    [${start_time}] # запоминаем время старта эксперимента
+- wait_coordinates: [${latitude}, ${longitude}] # ждём условие входа в бразильскую аномалию
+- orientation: [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}] # ждём ориентации аппарата
+- get_time: [${start_time}] # запоминаем время старта эксперимента
 - payload_power: ["Magnetometer", "true"] # включаем питание
 - payload_power: ["Giroscope", "true"]
 - wait: ["120"]
@@ -35,4 +35,4 @@ steps:  # начало скрипта
 - payload_power: ["MKSOS", ${keep_turn_on}]
 - payload_power: ["Flywheels", ${keep_turn_on}]
 - goto_if: [${wait_time} > "500", "mark1"] # условный переход к "mark1" при ненулевом значении первого аргумента
-- exit:          ["SUCCESS"] 
+- exit: ["SUCCESS"] 
