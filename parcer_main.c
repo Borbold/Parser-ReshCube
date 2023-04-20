@@ -3,9 +3,12 @@
 #include "stdlib.h"
 #include "string.h"
 
-#include "src/parcer/init/init_parcer.h"
-#include "src/parcer/result/result_parcer.h"
+#include "src/parser/init/init_parcer.h"
+#include "src/parser/result/result_parcer.h"
 
 #define DATA_FILE "./test/tests_scripts.txt"
 
-void main() { parser_init *struct_init = init_parser(DATA_FILE); }
+void main() {
+  parser_init *struct_init = init_parser(DATA_FILE);
+  parser_result *struct_result = read_string(struct_init, 0);
+}

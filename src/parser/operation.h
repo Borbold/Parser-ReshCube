@@ -12,7 +12,7 @@ typedef enum {
 } operation_type;
 
 typedef struct _operation {
-  operation_type oper_type;
+  operation_type operation_type;
   value operand;
   struct _operation *next_operation;
 } operation;

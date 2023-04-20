@@ -1,7 +1,7 @@
 {
     "files.associations": {
-        "result_parcer.h": "c",
-        "init_parcer.h": "c"
+        "result_parser.h": "c",
+        "init_parser.h": "c"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll": true

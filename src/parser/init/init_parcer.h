@@ -1,5 +1,5 @@
-#ifndef INIT_PARCER_H
-#define INIT_PARCER_H
+#ifndef INIT_parser_H
+#define INIT_parser_H
 
 #include "stdint.h"
 #include "stdio.h"
@@ -24,6 +24,7 @@ typedef struct {
   char *name;
   uint8_t arg_num;
   argument_list *arg_list;
+  FILE *file;
 } parser_init;
 
 parser_init *init_parser(char *path);
