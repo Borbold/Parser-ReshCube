@@ -21,7 +21,32 @@ parser_result *read_string(parser_init *struct_init, int number_line) {
   }
 
   buff = get_string(r_b, file);
-  printf("%s\n", buff);
+
+  int flag_N = 1;
+  char *a_name = malloc(strlen(buff));
+  int flag_V = 0;
+  char *a_value = malloc(strlen(buff));
+
+  int num_arg = 0;
+  for (int i = 0, j = 0; i < strlen(buff); i++, j++) {
+    if (flag_N) {
+      if (buff[i] == ':') {
+        flag_N = 0;
+        flag_V = 1;
+        j = 0;
+        i++;
+      } else
+        a_name[j] = buff[i];
+    }
+    if (buff[i] == '[' || buff[i] == ',') {
+      num_arg++;
+    }
+    if (flag_V) {
+      a_value[j] = buff[i];
+    }
+  }
+
+  printf("%s %s\n", a_name, a_value);
 
   free(buff);
   fclose(file);
