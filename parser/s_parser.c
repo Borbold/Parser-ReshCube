@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "s_parser.h"
 
 #include "stdint.h"
 #include "stdio.h"
@@ -269,7 +269,7 @@ parser_result *read_string(FILE *file) {
   return struct_res;
 }
 
-void main() {
+void s_main() {
   FILE *file = fopen(DATA_FILE, "r");
   // Парсим заголовок файла
   parser_state *struct_attr;

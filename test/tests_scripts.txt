@@ -1,28 +1,38 @@
-program:
+- program:
 name: "experiment_Brazilian_magnetic_anomaly"
-description: "Cбор магнитометрических и температурных данных"
-variables:
-- start_time: [35472, INT]
-constant: #секция_объявления_констант
-- latitude: [41.40338, DEC]
-- longitude: [2.17403, DEC]
+variables: # секция объявления переменных
+- start_time: ["integer"]
+- wait_time: ["integer"]
+constant: # секция объявления констант
+- latitude: ["41.40338"]
+- longitude: ["2.17403"]
+- period: ["3600"]
+- averaging_factor: ["0.5"]
+- target_orientation_w: ["0.2"]
+- target_orientation_x: ["0.3"]
+- target_orientation_y: ["0.4"]
+- target_orientation_z: ["0.5"]
 
-steps: #начало_скрипта
-- wait_coordinates: ["latitude", "longitude"] #ждём_условие_входа_в_бразильскую_аномалию
-- orientation: [${target_orientation}] #ждём_ориентации_аппарата
-- start_time: ["c_get_time()"] #запоминаем_время_старта_эксперимента
-- payload_power: ["Magnetometer", true] #включаем_питание
-- payload_power: ["Giroscope", true]
+description: "Cбор магнитометрических и температурных данных"
+steps:  # начало скрипта
+- wait_coordinates: [${latitude},${longitude}] # ждём условие входа в бразильскую аномалию
+- orientation:   [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}] # ждём ориентации аппарата
+- get_time:    [${start_time}] # запоминаем время старта эксперимента
+- payload_power: ["Magnetometer", "true"] # включаем питание
+- payload_power: ["Giroscope", "true"]
 - wait: ["120"]
-- set_marker: [marker1]
 - create_meter: ["B_A"]
-- add_chanal_meter: ["B_A", "Magnetometer", ${period}, ${averaging_factor}]
-- add_chanal_meter: ["B_A", "Giroscope", ${period}, ${averaging_factor}]
+- add_chanal_meter: ["B_A","Magnetometer",${period},${averaging_factor}]
+- add_chanal_meter: ["B_A","Giroscope",${period},${averaging_factor}]
 - run_meter: ["B_A"]
-- wait: [${period} + "start_time"]
+- wait_to: [${period}+${start_time}]
 - stop_meter: ["B_A"]
-- payload_power: ["motherboard", ${keep_turn_on}] #включаем_питание
+- assign: [${wait_time}, ${period}+${start_time}] # присваивание значения переменной
+- set_mark: ["mark1"] # установка метки
+- assign: [${wait_time}, ${wait_time} + "3"]
+- payload_power: ["motherboard", ${keep_turn_on}] # включаем питание
 - payload_power: ["UMK", ${keep_turn_on}]
 - payload_power: ["MKSOS", ${keep_turn_on}]
 - payload_power: ["Flywheels", ${keep_turn_on}]
-- exit: ["SUCESSES"]
+- goto_if: [${wait_time} > "500", "mark1"] # условный переход к "mark1" при ненулевом значении первого аргумента
+- exit:          ["SUCCESS"] 
