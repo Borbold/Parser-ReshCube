@@ -21,3 +21,15 @@ char *get_word(char r_b, char *buff, int *read_count) {
   }
   return buff;
 }
+
+char *get_string(char r_b, FILE *file) {
+  char *buff;
+  int read_count = 0;
+  while (fread(&r_b, 1, 1, file) > 0) {
+    if (not_comment(file, r_b) == 1)
+      break;
+    if (r_b != ' ')
+      buff = get_word(r_b, buff, &read_count);
+  }
+  return buff;
+}

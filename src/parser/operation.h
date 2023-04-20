@@ -4,11 +4,22 @@
 #include "value.h"
 
 typedef enum {
-  OPERATION_PLUS,
-  OPERATION_MINUS,
-  OPERATION_MULYIPLY,
-  OPERATION_DIVISION,
-  //...
+  OP_GTE,  // >=
+  OP_GT,   // >
+  OP_LTE,  // <=
+  OP_LT,   // <
+  OP_EQ,   // =
+  OP_NEQ,  // !=
+  OP_ADD,  // +
+  OP_SUB,  // -
+  OP_MULT, // *
+  OP_DIV,  // /
+  OP_NOT,  // !
+  OP_AND,  // &&
+  OP_OR,   // ||
+  OP_LP,   // (
+  OP_RP,   // )
+  OP_NULL  // Пустая
 } operation_type;
 
 typedef struct _operation {
