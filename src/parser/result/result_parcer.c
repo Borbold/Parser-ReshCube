@@ -2,7 +2,7 @@
 
 #include "../basic_parser.h"
 
-static int check_operation(char r_b);
+static int check_operation(char r_b, FILE *file);
 
 parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
@@ -55,7 +55,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   for (int i = 0; i < num_arg; i++)
     struct_result->operation_list[i].operand.name = malloc(sizeof(char));
 
-  int i = 1;
+  int i = 1, flag_LP = 0, type_op = OP_NULL;
   for (int j = 0; j < num_arg; j++) {
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
       if (r_value[i] == '$') {
@@ -76,12 +76,22 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         }
       }
 
+      if (r_value[i] == '[')
+        flag_LP = 1;
+      if (flag_LP)
+        type_op = check_operation(r_b, file);
+
       if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
         struct_result->operation_list[j].next_operation = NULL;
         i++;
         break;
-      } else if (check_operation(r_b) == 0) {
+      } else if (type_op != OP_NULL) {
+        struct_result->operation_list[j].operation_type = type_op;
+        struct_result->operation_list[j].next_operation =
+            &struct_result->operation_list[j];
+        i++;
+        break;
       }
       struct_result->operation_list[j].operand.name[k] = r_value[i];
     }
@@ -98,12 +108,52 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   return struct_result;
 }
 
-int check_operation(char r_b) {
+int check_operation(char r_b, FILE *file) {
   switch (r_b) {
-  case '+':
+  case '>':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '=')
+      return OP_GTE;
+    return OP_GT;
+  case '<':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '=')
+      return OP_LTE;
+    return OP_LT;
+  case '=':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '=')
+      return OP_EQ;
     break;
+  case '!':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '=')
+      return OP_NEQ;
+    return OP_NOT;
+  case '+':
+    return OP_ADD;
+  case '-':
+    return OP_SUB;
+  case '*':
+    return OP_MULT;
+  case '/':
+    return OP_DIV;
+  case '&':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '&')
+      return OP_AND;
+    break;
+  case '|':
+    fread(&r_b, 1, 1, file);
+    if (r_b == '|')
+      return OP_OR;
+    break;
+  case '(':
+    return OP_LP;
+  case ')':
+    return OP_RP;
   }
-  return 1;
+  return OP_NULL;
 }
 
 void free_result(parser_result *par) {

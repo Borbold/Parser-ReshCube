@@ -8,7 +8,7 @@ typedef enum {
   OP_GT,   // >
   OP_LTE,  // <=
   OP_LT,   // <
-  OP_EQ,   // =
+  OP_EQ,   // ==
   OP_NEQ,  // !=
   OP_ADD,  // +
   OP_SUB,  // -
