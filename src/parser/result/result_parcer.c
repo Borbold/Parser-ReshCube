@@ -2,7 +2,7 @@
 
 #include "../basic_parser.h"
 
-parser_result *read_string(parser_init *struct_init, int number_line) {
+parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
   fseek(struct_init->file, 0, SEEK_SET);
   FILE *file = struct_init->file;
@@ -23,9 +23,9 @@ parser_result *read_string(parser_init *struct_init, int number_line) {
   buff = get_string(r_b, file);
 
   int flag_N = 1;
-  char *a_name = malloc(strlen(buff));
+  char *r_name = malloc(strlen(buff));
   int flag_V = 0;
-  char *a_value = malloc(strlen(buff));
+  char *r_value = malloc(strlen(buff));
 
   int num_arg = 0;
   for (int i = 0, j = 0; i < strlen(buff); i++, j++) {
@@ -36,17 +36,20 @@ parser_result *read_string(parser_init *struct_init, int number_line) {
         j = 0;
         i++;
       } else
-        a_name[j] = buff[i];
+        r_name[j] = buff[i];
     }
     if (buff[i] == '[' || buff[i] == ',') {
       num_arg++;
     }
     if (flag_V) {
-      a_value[j] = buff[i];
+      r_value[j] = buff[i];
     }
   }
 
-  printf("%s %s\n", a_name, a_value);
+  printf("%s %s\n", r_name, r_value);
+  struct_result->result_type = RESULT_FUN;
+  struct_result->attribute_num = num_arg;
+  struct_result->name = r_name;
 
   free(buff);
   fclose(file);
@@ -54,7 +57,7 @@ parser_result *read_string(parser_init *struct_init, int number_line) {
 }
 
 void free_result(parser_result *par) {
-  for (int i = 0; i < par->operation_num; i++)
+  for (int i = 0; i < par->attribute_num; i++)
     free(par[i].operation_list);
   free(par->operation_list);
   free(par);

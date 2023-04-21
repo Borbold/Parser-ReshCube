@@ -13,13 +13,15 @@ const int count_command = 4;
 const char *const parser_command[] = {
     "program:", "variables:", "constant:", "steps:"};
 
-static parser_init *attr_get_state(parser_init *struct_init, char *s_name,
-                                   init_type s_type, FILE *file);
+static parser_state *attr_get_state(parser_state *struct_init, FILE *file,
+                                    int type);
+static void fill_var(parser_state *struct_init, int arg_num, char *buff);
+static void fill_con(parser_state *struct_init, int arg_num, char *buff);
 
-parser_init *init_parser(char *path) {
+parser_state *init_parser(char *path) {
   FILE *file = fopen(path, "r");
   // 2 - две используемые команды: variables и constant
-  parser_init *struct_init = malloc(2 * sizeof(parser_init));
+  parser_state *struct_init = malloc(sizeof(parser_state));
   struct_init->file = file;
 
   char *buff, r_b;
@@ -33,10 +35,10 @@ parser_init *init_parser(char *path) {
           printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
         } else if (strcmp(buff, parser_command[i]) == 0 && i == VARIABLES) {
           printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
-          attr_get_state(&struct_init[INIT_VAR], "variables", INIT_VAR, file);
+          attr_get_state(struct_init, file, VARIABLES);
         } else if (strcmp(buff, parser_command[i]) == 0 && i == CONSTANT) {
           printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
-          attr_get_state(&struct_init[INIT_CON], "constant", INIT_CON, file);
+          attr_get_state(struct_init, file, CONSTANT);
         } else if (strcmp(buff, parser_command[i]) == 0 && i == STEPS) {
           printf("%sSteps exist%s\n", "\033[1;34m", "\033[0m");
         }
@@ -48,11 +50,7 @@ parser_init *init_parser(char *path) {
   return struct_init;
 }
 
-parser_init *attr_get_state(parser_init *struct_init, char *s_name,
-                            init_type s_type, FILE *file) {
-  struct_init->name = s_name;
-  struct_init->init_type = s_type;
-
+parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   int arg_num = 0;
 
   fpos_t pos;
@@ -89,8 +87,18 @@ parser_init *attr_get_state(parser_init *struct_init, char *s_name,
     }
   }
 
-  struct_init->arg_num = arg_num;
-  struct_init->arg_list = malloc(arg_num * sizeof(argument_list));
+  if (type == VARIABLES)
+    fill_var(struct_init, arg_num, buff);
+  else if (type == CONSTANT)
+    fill_con(struct_init, arg_num, buff);
+
+  free(buff);
+  return struct_init;
+}
+
+void fill_var(parser_state *struct_init, int arg_num, char *buff) {
+  struct_init->val_num = arg_num;
+  struct_init->var_list = malloc(arg_num * sizeof(variable_list));
 
   char *a_name = malloc(strlen(buff));
   char *a_type = malloc(strlen(buff));
@@ -103,7 +111,7 @@ parser_init *attr_get_state(parser_init *struct_init, char *s_name,
       }
       a_name[j] = buff[i];
     }
-    struct_init->arg_list[arg].name = a_name;
+    struct_init->var_list[arg].name = a_name;
     a_name = malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
       if (buff[i] == '[')
@@ -114,17 +122,53 @@ parser_init *attr_get_state(parser_init *struct_init, char *s_name,
       }
       a_type[j] = buff[i];
     }
-    struct_init->arg_list[arg].type = a_type;
+    struct_init->var_list[arg].type = a_type;
+    if (strcmp(a_type, "integer") == 0)
+      struct_init->var_list[arg].value = malloc(sizeof(int));
+    else if (strcmp(a_type, "decimal") == 0)
+      struct_init->var_list[arg].value = malloc(sizeof(float));
+    else
+      struct_init->var_list[arg].value = malloc(sizeof(char));
     a_type = malloc(strlen(buff));
   }
+}
+void fill_con(parser_state *struct_init, int arg_num, char *buff) {
+  struct_init->con_num = arg_num;
+  struct_init->con_list = malloc(arg_num * sizeof(variable_list));
 
-  free(buff);
-  return struct_init;
+  char *a_name = malloc(strlen(buff));
+  char *a_value = malloc(strlen(buff));
+  int i = 0;
+  for (int arg = 0; arg < arg_num; arg++) {
+    for (int j = 0; i < strlen(buff); i++, j++) {
+      if (buff[i] == ':') {
+        i++;
+        break;
+      }
+      a_name[j] = buff[i];
+    }
+    struct_init->con_list[arg].name = a_name;
+    a_name = malloc(strlen(buff));
+    for (int j = 0; i < strlen(buff); i++, j++) {
+      if (buff[i] == '[')
+        i++;
+      if (buff[i] == ']') {
+        i++;
+        break;
+      }
+      a_value[j] = buff[i];
+    }
+    struct_init->con_list[arg].value = a_value;
+    a_value = malloc(strlen(buff));
+  }
 }
 
-void free_init(parser_init *par) {
-  for (int i = 0; i < par->arg_num; i++)
-    free(par[i].arg_list);
-  free(par->arg_list);
+void free_init(parser_state *par) {
+  for (int i = 0; i < par->val_num; i++)
+    free(par[i].var_list);
+  free(par->var_list);
+  for (int i = 0; i < par->con_num; i++)
+    free(par[i].con_list);
+  free(par->con_list);
   free(par);
 }
