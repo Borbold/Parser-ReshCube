@@ -63,6 +63,8 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
       struct_result->operation_list[j].operand.name[k] = r_value[i];
     }
   }
+  struct_result->operation_list->operation_type = OP_NULL;
+  struct_result->operation_list->next_operation = NULL;
 
   printf("%s count:%d\n", struct_result->name, struct_result->attribute_num);
   for (int i = 0; i < num_arg; i++)
