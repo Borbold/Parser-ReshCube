@@ -56,23 +56,52 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   int i = 1;
   for (int j = 0; j < num_arg; j++) {
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
-      if (r_value[i] == ',') {
+      if (r_value[i] == '$') {
+        struct_result->operation_list[j].operand.type = VALUE_EXACLY;
+        i++;
+      } else if (r_value[i] == '"') {
+        struct_result->operation_list[j].operand.type = VALUE_CONSTANT;
+        i++;
+      }
+
+      if (struct_result->operation_list[j].operand.type == VALUE_EXACLY) {
+        if (r_value[i] == '{') {
+          // Проверяем на открывающую скобку
+          i++;
+        } else if (r_value[i] == '}') {
+          // Проверяем на закрывающую скобку
+          i++;
+        }
+      }
+
+      if (r_value[i] == ',' || r_value[i] == ']') {
+        struct_result->operation_list[j].operation_type = OP_NULL;
+        struct_result->operation_list[j].next_operation = NULL;
         i++;
         break;
+      } else if (check_operation() == 0) {
       }
       struct_result->operation_list[j].operand.name[k] = r_value[i];
     }
   }
-  struct_result->operation_list->operation_type = OP_NULL;
-  struct_result->operation_list->next_operation = NULL;
 
-  printf("%s count:%d\n", struct_result->name, struct_result->attribute_num);
+  printf("%s\t\t| count: %d\n", struct_result->name,
+         struct_result->attribute_num);
   for (int i = 0; i < num_arg; i++)
-    printf("%s\n", struct_result->operation_list[i].operand.name);
+    printf("%s\t| type: %d\n", struct_result->operation_list[i].operand.name,
+           struct_result->operation_list[i].operand.type);
 
   free(buff);
   fclose(file);
   return struct_result;
+}
+
+int check_operation(char r_b) {
+  swith(r_b) {
+  case '+':
+    break;
+  }
+  return 1;
 }
 
 void free_result(parser_result *par) {

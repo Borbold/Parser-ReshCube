@@ -22,10 +22,10 @@ steps:  # начало скрипта
 - payload_power: ["Giroscope", "true"]
 - wait: ["120"]
 - create_meter: ["B_A"]
-- add_chanal_meter: ["B_A","Magnetometer",${period},${averaging_factor}]
-- add_chanal_meter: ["B_A","Giroscope",${period},${averaging_factor}]
+- add_chanal_meter: ["B_A", "Magnetometer", ${period}, ${averaging_factor}]
+- add_chanal_meter: ["B_A", "Giroscope", ${period}, ${averaging_factor}]
 - run_meter: ["B_A"]
-- wait_to: [${period}+${start_time}]
+- wait_to: [${period} + ${start_time}]
 - stop_meter: ["B_A"]
 - assign: [${wait_time}, ${period}+${start_time}] # присваивание значения переменной
 - set_mark: ["mark1"] # установка метки

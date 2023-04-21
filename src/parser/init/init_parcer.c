@@ -27,7 +27,7 @@ parser_state *init_parser(char *path) {
   char *buff, r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (not_comment(file, r_b) == 0)
+    if (skip_comment(file, r_b) == 0)
       buff = get_word(r_b, buff, &read_count);
     if (read_count == 0 && strlen(buff) > 0) {
       for (int i = 0; i < count_command; i++) {
@@ -57,7 +57,7 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   char *buff, r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (not_comment(file, r_b) == 0) {
+    if (skip_comment(file, r_b) == 0) {
       if (r_b != '-') {
         fsetpos(file, &pos);
         break;
