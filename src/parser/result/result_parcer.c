@@ -46,10 +46,27 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
     }
   }
 
-  printf("%s %s\n", r_name, r_value);
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;
   struct_result->name = r_name;
+  struct_result->operation_list = malloc(num_arg * sizeof(operation));
+  for (int i = 0; i < num_arg; i++)
+    struct_result->operation_list[i].operand.name = malloc(sizeof(char));
+
+  int i = 1;
+  for (int j = 0; j < num_arg; j++) {
+    for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
+      if (r_value[i] == ',') {
+        i++;
+        break;
+      }
+      struct_result->operation_list[j].operand.name[k] = r_value[i];
+    }
+  }
+
+  printf("%s count:%d\n", struct_result->name, struct_result->attribute_num);
+  for (int i = 0; i < num_arg; i++)
+    printf("%s\n", struct_result->operation_list[i].operand.name);
 
   free(buff);
   fclose(file);
