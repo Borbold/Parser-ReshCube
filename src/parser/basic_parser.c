@@ -26,10 +26,11 @@ char *get_string(char r_b, FILE *file) {
   char *buff;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (skip_comment(file, r_b) == 1)
+    if (r_b == '#' || r_b == '\n')
       break;
     if (r_b != ' ')
       buff = get_word(r_b, buff, &read_count);
   }
+  printf("\n%s\n\n", buff);
   return buff;
 }

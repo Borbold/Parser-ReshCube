@@ -27,7 +27,7 @@ steps:  # начало скрипта
 - run_meter: ["B_A"]
 - wait_to: [${period} + ${start_time}]
 - stop_meter: ["B_A"]
-- assign: [${wait_time}, ${period}+${start_time}] # присваивание значения переменной
+- assign: [${wait_time}, ${period} + ${start_time}] # присваивание значения переменной
 - set_mark: ["mark1"] # установка метки
 - assign: [${wait_time}, ${wait_time} + "3"]
 - payload_power: ["motherboard", ${keep_turn_on}] # включаем питание

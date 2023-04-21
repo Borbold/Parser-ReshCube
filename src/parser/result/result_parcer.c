@@ -14,12 +14,10 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   char *buff, r_b;
   int count_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (count_line == number_line) {
+    if (count_line == number_line)
       break;
-    }
-    if (r_b == '\n') {
+    if (r_b == '\n')
       count_line++;
-    }
   }
 
   buff = get_string(r_b, file);
