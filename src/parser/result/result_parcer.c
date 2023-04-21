@@ -2,6 +2,8 @@
 
 #include "../basic_parser.h"
 
+static int check_operation(char r_b);
+
 parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
   fseek(struct_init->file, 0, SEEK_SET);
@@ -79,7 +81,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         struct_result->operation_list[j].next_operation = NULL;
         i++;
         break;
-      } else if (check_operation() == 0) {
+      } else if (check_operation(r_b) == 0) {
       }
       struct_result->operation_list[j].operand.name[k] = r_value[i];
     }
@@ -97,7 +99,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
 }
 
 int check_operation(char r_b) {
-  swith(r_b) {
+  switch (r_b) {
   case '+':
     break;
   }
