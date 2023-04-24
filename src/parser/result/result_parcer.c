@@ -58,6 +58,14 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   for (int j = 0; j < num_arg; j++) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
+      if (i >= 255) {
+        char *err_str = "";
+        sprintf(err_str, "The line is too long. Number string: %d",
+                number_line);
+        struct_result->error = err_str;
+        return struct_result;
+      }
+
       if (r_value[i] == '[' || r_value[i] == ',') {
         flag_LP = 1;
         i++;
@@ -101,21 +109,6 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         break;
       }
       op_name[k] = r_value[i];
-    }
-  }
-
-  printf("%s\t\t| count: %d\n", struct_result->name,
-         struct_result->attribute_num);
-  for (int i = 0; i < num_arg; i++) {
-    if (struct_result->operation_list[i].operation_type == OP_NULL) {
-      printf("%s\t| type: %d\n", struct_result->operation_list[i].operand.name,
-             struct_result->operation_list[i].operand.type);
-    } else {
-      operation *op = &struct_result->operation_list[i];
-      while (op != NULL) {
-        printf("%s\t| OP_type:%d\n", op->operand.name, op->operation_type);
-        op = op->next;
-      }
     }
   }
 
