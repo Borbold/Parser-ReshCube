@@ -87,7 +87,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
           check_type_variable(new_op, r_value, &i);
           check_curly_braces(new_op, r_value, &i);
 
-          if (r_value[i] == ']') {
+          if (r_value[i] == ',' || r_value[i] == ']') {
             new_op->next = NULL;
             i++;
             break;
@@ -97,6 +97,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         }
         struct_result->operation_list[j].next = new_op;
         i++;
+        op_name = malloc(sizeof(char));
         break;
       }
       op_name[k] = r_value[i];
