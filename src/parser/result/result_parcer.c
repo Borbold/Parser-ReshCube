@@ -58,7 +58,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   for (int j = 0; j < num_arg; j++) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
-      if (r_value[i] == '[') {
+      if (r_value[i] == '[' || r_value[i] == ',') {
         flag_LP = 1;
         i++;
       }
@@ -70,15 +70,11 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         type_op = check_operation(r_value, i);
       }
 
-      if (r_value[i] == ']') {
-        struct_result->operation_list[j].next = NULL;
-        i++;
-        break;
-      } else if (r_value[i] == ',') {
+      if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
         struct_result->operation_list[j].operand.name = op_name;
         struct_result->operation_list[j].next = NULL;
-        i++;
+        op_name = malloc(sizeof(char));
         break;
       } else if (flag_LP == 1 && type_op != OP_NULL) {
         struct_result->operation_list[j].operation_type = type_op;
@@ -114,15 +110,13 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
       printf("%s\t| type: %d\n", struct_result->operation_list[i].operand.name,
              struct_result->operation_list[i].operand.type);
     } else {
-      /*printf("%s\t| operand:%d\n",
-             struct_result->operation_list[i].operand.name,
-             struct_result->operation_list[i].operation_type);*/
+      operation *op = &struct_result->operation_list[i];
+      while (op != NULL) {
+        printf("%s\t| OP_type:%d\n", op->operand.name, op->operation_type);
+        op = op->next;
+      }
     }
   }
-  printf("%s:%d\n", struct_result->operation_list->operand.name,
-         struct_result->operation_list->operation_type);
-  printf("%s:%d\n", struct_result->operation_list->next->operand.name,
-         struct_result->operation_list->next->operation_type);
 
   free(buff);
   fclose(file);

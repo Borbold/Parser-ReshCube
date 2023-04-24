@@ -10,5 +10,5 @@
 
 void main() {
   parser_state *struct_init = init_parser(DATA_FILE);
-  parser_result *struct_result = read_string(struct_init, 28);
+  parser_result *struct_result = read_string(struct_init, 30);
 }
