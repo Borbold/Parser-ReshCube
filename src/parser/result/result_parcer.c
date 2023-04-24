@@ -2,7 +2,7 @@
 
 #include "../basic_parser.h"
 
-static int check_operation(char r_b, FILE *file);
+static int check_operation(char *str, int i);
 
 parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
@@ -50,12 +50,17 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   struct_result->attribute_num = num_arg;
   struct_result->name = r_name;
   struct_result->operation_list = malloc(num_arg * sizeof(operation));
-  for (int i = 0; i < num_arg; i++)
-    struct_result->operation_list[i].operand.name = malloc(sizeof(char));
+  char *op_name = malloc(sizeof(char));
 
-  int i = 1, flag_LP = 0, type_op = OP_NULL;
+  int i = 0, type_op = OP_NULL;
   for (int j = 0; j < num_arg; j++) {
+    int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
+      if (r_value[i] == '[') {
+        flag_LP = 1;
+        i++;
+      }
+
       if (r_value[i] == '$') {
         struct_result->operation_list[j].operand.type = VALUE_EXACLY;
         i++;
@@ -74,58 +79,100 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         }
       }
 
-      if (r_value[i] == '[')
-        flag_LP = 1;
-      if (flag_LP)
-        type_op = check_operation(r_b, file);
+      if (flag_LP) {
+        type_op = check_operation(r_value, i);
+      }
 
-      if (r_value[i] == ',' || r_value[i] == ']') {
-        struct_result->operation_list[j].operation_type = OP_NULL;
-        struct_result->operation_list[j].next_operation = NULL;
+      if (r_value[i] == ']') {
+        struct_result->operation_list[j].next = NULL;
         i++;
         break;
-      } else if (type_op != OP_NULL) {
+      } else if (r_value[i] == ',') {
+        struct_result->operation_list[j].operation_type = OP_NULL;
+        struct_result->operation_list[j].operand.name = op_name;
+        struct_result->operation_list[j].next = NULL;
+        i++;
+        break;
+      } else if (flag_LP == 1 && type_op != OP_NULL) {
         struct_result->operation_list[j].operation_type = type_op;
-        struct_result->operation_list[j].next_operation =
-            &struct_result->operation_list[j];
+        struct_result->operation_list[j].operand.name = op_name;
+        operation *new_op = malloc(sizeof(operation));
+        new_op->operation_type = OP_NULL;
+        new_op->operand.name = malloc(sizeof(char));
+        i++;
+        for (int n = 0; i < strlen(r_value) - 1; i++, n++) {
+          if (r_value[i] == '$') {
+            new_op->operand.type = VALUE_EXACLY;
+            i++;
+          } else if (r_value[i] == '"') {
+            new_op->operand.type = VALUE_CONSTANT;
+            i++;
+          }
+
+          if (new_op->operand.type == VALUE_EXACLY) {
+            if (r_value[i] == '{') {
+              // Проверяем на открывающую скобку
+              i++;
+            } else if (r_value[i] == '}') {
+              // Проверяем на закрывающую скобку
+              i++;
+            }
+          }
+
+          if (r_value[i] == ']') {
+            new_op->next = NULL;
+            i++;
+            break;
+          }
+
+          new_op->operand.name[n] = r_value[i];
+        }
+        struct_result->operation_list[j].next = new_op;
         i++;
         break;
       }
-      struct_result->operation_list[j].operand.name[k] = r_value[i];
+      op_name[k] = r_value[i];
     }
   }
 
   printf("%s\t\t| count: %d\n", struct_result->name,
          struct_result->attribute_num);
-  for (int i = 0; i < num_arg; i++)
-    printf("%s\t| type: %d\n", struct_result->operation_list[i].operand.name,
-           struct_result->operation_list[i].operand.type);
+  for (int i = 0; i < num_arg; i++) {
+    if (struct_result->operation_list[i].operation_type == OP_NULL) {
+      printf("%s\t| type: %d\n", struct_result->operation_list[i].operand.name,
+             struct_result->operation_list[i].operand.type);
+    } else {
+      /*printf("%s\t| operand:%d\n",
+             struct_result->operation_list[i].operand.name,
+             struct_result->operation_list[i].operation_type);*/
+    }
+  }
+  printf("%s:%d\n", struct_result->operation_list->operand.name,
+         struct_result->operation_list->operation_type);
+  printf("%s:%d\n", struct_result->operation_list->next->operand.name,
+         struct_result->operation_list->next->operation_type);
 
   free(buff);
   fclose(file);
   return struct_result;
 }
 
-int check_operation(char r_b, FILE *file) {
-  switch (r_b) {
+int check_operation(char *str, int i) {
+  switch (str[i]) {
   case '>':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '=')
+    if (str[i + 1] == '=')
       return OP_GTE;
     return OP_GT;
   case '<':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '=')
+    if (str[i + 1] == '=')
       return OP_LTE;
     return OP_LT;
   case '=':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '=')
+    if (str[i + 1] == '=')
       return OP_EQ;
     break;
   case '!':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '=')
+    if (str[i + 1] == '=')
       return OP_NEQ;
     return OP_NOT;
   case '+':
@@ -137,13 +184,11 @@ int check_operation(char r_b, FILE *file) {
   case '/':
     return OP_DIV;
   case '&':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '&')
+    if (str[i + 1] == '&')
       return OP_AND;
     break;
   case '|':
-    fread(&r_b, 1, 1, file);
-    if (r_b == '|')
+    if (str[i + 1] == '|')
       return OP_OR;
     break;
   case '(':

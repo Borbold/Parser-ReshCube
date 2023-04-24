@@ -25,7 +25,7 @@ typedef enum {
 typedef struct _operation {
   operation_type operation_type;
   value operand;
-  struct _operation *next_operation;
+  struct _operation *next;
 } operation;
 
 #endif

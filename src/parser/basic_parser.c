@@ -31,6 +31,5 @@ char *get_string(char r_b, FILE *file) {
     if (r_b != ' ')
       buff = get_word(r_b, buff, &read_count);
   }
-  printf("\n%s\n\n", buff);
   return buff;
 }
