@@ -3,6 +3,8 @@
 #include "../basic_parser.h"
 
 static int check_operation(char *str, int i);
+static void check_curly_braces(operation *oper, char *r_value, int *i);
+static void check_type_variable(operation *oper, char *r_value, int *i);
 
 parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
@@ -61,23 +63,8 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         i++;
       }
 
-      if (r_value[i] == '$') {
-        struct_result->operation_list[j].operand.type = VALUE_EXACLY;
-        i++;
-      } else if (r_value[i] == '"') {
-        struct_result->operation_list[j].operand.type = VALUE_CONSTANT;
-        i++;
-      }
-
-      if (struct_result->operation_list[j].operand.type == VALUE_EXACLY) {
-        if (r_value[i] == '{') {
-          // Проверяем на открывающую скобку
-          i++;
-        } else if (r_value[i] == '}') {
-          // Проверяем на закрывающую скобку
-          i++;
-        }
-      }
+      check_type_variable(struct_result->operation_list, r_value, &i);
+      check_curly_braces(struct_result->operation_list, r_value, &i);
 
       if (flag_LP) {
         type_op = check_operation(r_value, i);
@@ -101,23 +88,8 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
         new_op->operand.name = malloc(sizeof(char));
         i++;
         for (int n = 0; i < strlen(r_value) - 1; i++, n++) {
-          if (r_value[i] == '$') {
-            new_op->operand.type = VALUE_EXACLY;
-            i++;
-          } else if (r_value[i] == '"') {
-            new_op->operand.type = VALUE_CONSTANT;
-            i++;
-          }
-
-          if (new_op->operand.type == VALUE_EXACLY) {
-            if (r_value[i] == '{') {
-              // Проверяем на открывающую скобку
-              i++;
-            } else if (r_value[i] == '}') {
-              // Проверяем на закрывающую скобку
-              i++;
-            }
-          }
+          check_type_variable(new_op, r_value, &i);
+          check_curly_braces(new_op, r_value, &i);
 
           if (r_value[i] == ']') {
             new_op->next = NULL;
@@ -155,6 +127,28 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   free(buff);
   fclose(file);
   return struct_result;
+}
+
+void check_type_variable(operation *oper, char *r_value, int *i) {
+  if (r_value[*i] == '$') {
+    oper->operand.type = VALUE_EXACLY;
+    *i += 1;
+  } else if (r_value[*i] == '"') {
+    oper->operand.type = VALUE_CONSTANT;
+    *i += 1;
+  }
+}
+
+void check_curly_braces(operation *oper, char *r_value, int *i) {
+  if (oper->operand.type == VALUE_EXACLY) {
+    if (r_value[*i] == '{') {
+      // Проверяем на открывающую скобку
+      *i += 1;
+    } else if (r_value[*i] == '}') {
+      // Проверяем на закрывающую скобку
+      *i += 1;
+    }
+  }
 }
 
 int check_operation(char *str, int i) {
