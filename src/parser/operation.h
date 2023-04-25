@@ -4,6 +4,7 @@
 #include "value.h"
 
 typedef enum {
+  OP_NULL, // Пустая
   OP_GTE,  // >=
   OP_GT,   // >
   OP_LTE,  // <=
@@ -18,8 +19,7 @@ typedef enum {
   OP_AND,  // &&
   OP_OR,   // ||
   OP_LP,   // (
-  OP_RP,   // )
-  OP_NULL  // Пустая
+  OP_RP    // )
 } operation_type;
 
 typedef struct _operation {
