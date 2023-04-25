@@ -15,7 +15,7 @@ typedef enum {
 } result_type;
 
 typedef struct {
-  char *error;
+  char *err_str;
   result_type result_type;
   char *name;
   uint8_t attribute_num;
