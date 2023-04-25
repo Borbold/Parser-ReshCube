@@ -1,5 +1,5 @@
-#ifndef INIT_parser_H
-#define INIT_parser_H
+#ifndef INIT_PARSER_H
+#define INIT_PARSER_H
 
 #include "stdint.h"
 #include "stdio.h"

@@ -1,5 +1,5 @@
-#ifndef RESULT_parser_H
-#define RESULT_parser_H
+#ifndef RESULT_PARSER_H
+#define RESULT_PARSER_H
 
 #include "stdint.h"
 #include "stdio.h"
