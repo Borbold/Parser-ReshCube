@@ -5,6 +5,8 @@
 static int check_operation(char *str, int i);
 static void check_curly_braces(operation *oper, char *r_value, int *i);
 static void check_type_variable(operation *oper, char *r_value, int *i);
+static int check_error_long_line(parser_result *struct_result, int i,
+                                 int number_line);
 
 parser_result *read_string(parser_state *struct_init, int number_line) {
   number_line--;
@@ -58,13 +60,8 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   for (int j = 0; j < num_arg; j++) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
-      if (i >= 255) {
-        char *err_str = "";
-        sprintf(err_str, "The line is too long. Number string: %d",
-                number_line);
-        struct_result->error = err_str;
+      if (check_error_long_line(struct_result, i, number_line))
         return struct_result;
-      }
 
       if (r_value[i] == '[' || r_value[i] == ',') {
         flag_LP = 1;
@@ -115,6 +112,17 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   free(buff);
   fclose(file);
   return struct_result;
+}
+
+int check_error_long_line(parser_result *struct_result, int i,
+                          int number_line) {
+  if (i >= 255) {
+    char *err_str = "";
+    sprintf(err_str, "The line is too long. Number string: %d", number_line);
+    struct_result->error = err_str;
+    return 1;
+  }
+  return 0;
 }
 
 void check_type_variable(operation *oper, char *r_value, int *i) {
