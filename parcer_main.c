@@ -13,6 +13,7 @@ void main() {
   if (!struct_init->err_str) {
     set_fposition(struct_init->file, struct_init->state_pos);
     parser_result *struct_result = read_string(struct_init);
+    struct_result = read_string(struct_init);
     if (struct_result->err_str) {
       printf("%s%s%s\n", "\033[1;31m", struct_result->err_str, "\033[0m");
       return;
@@ -33,5 +34,8 @@ void main() {
         }
       }
     }
+    // Закрытие файла остается вне функционала парсера ибо Парсер постоянно его
+    // использует.
+    fclose(struct_init->file);
   }
 }

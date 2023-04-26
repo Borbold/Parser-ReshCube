@@ -104,7 +104,6 @@ parser_result *read_string(parser_state *struct_init) {
   }
 
   free(buff);
-  fclose(file);
   return struct_result;
 }
 
