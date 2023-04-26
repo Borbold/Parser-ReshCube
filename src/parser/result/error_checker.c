@@ -1,5 +1,7 @@
 #include "error_checker.h"
 
+#include "../basic_parser.h"
+
 enum err { CORRECT, WRONG };
 
 static int check_error_miss_sign(char symbol, char *check_str);
@@ -10,7 +12,7 @@ static int check_error_reverse_miss_mirror_symbol(char symbol_1, char symbol_2,
 
 int check_error_all_miss_mirror_symbol(parser_result *struct_result,
                                        char *check_str) {
-  char *er_str = malloc(sizeof(char));
+  char *er_str = m_malloc(sizeof(char));
   if (check_error_miss_mirror_symbol('[', ']', check_str) == WRONG) {
     sprintf(er_str, "1) On the line - %s miss symbol ']'", check_str);
     struct_result->err_str = er_str;
@@ -44,13 +46,14 @@ int check_error_all_miss_mirror_symbol(parser_result *struct_result,
     return WRONG;
   }
 
-  if (check_error_miss_sign('}', check_str) == WRONG) {
+  if (check_error_miss_sign('}', check_str) == WRONG ||
+      check_error_miss_sign('"', check_str) == WRONG) {
     sprintf(er_str, "7) On the line - %s miss symbol ',' or sign", check_str);
     struct_result->err_str = er_str;
     return WRONG;
   }
 
-  free(er_str);
+  mr_free(er_str);
   return CORRECT;
 }
 
@@ -65,12 +68,32 @@ int check_error_long_line(parser_result *struct_result, int i,
   return CORRECT;
 }
 
+int check_sign(char r_b) {
+  if (r_b != '+' || r_b != '-' || r_b != '*' || r_b != '/' || r_b != '<' ||
+      r_b != '>' || r_b != ')' || r_b != '(' || r_b != '|' || r_b != '&')
+    return 1;
+  return 0;
+}
+
 int check_error_miss_sign(char symbol, char *check_str) {
   int er_flag = CORRECT;
-  for (int i = 0; i < strlen(check_str) - 2; i++) {
-    if (check_str[i] == symbol && check_str[i + 1] != ',') {
-      if (check_str[i + 1] != '+')
-        er_flag = WRONG;
+  if (symbol == '}') {
+    for (int i = 0; i < strlen(check_str) - 2; i++) {
+      if (check_str[i] == symbol && check_str[i + 1] != ',') {
+        if (check_sign(check_str[i + 1]))
+          er_flag = WRONG;
+      }
+    }
+  } else if (symbol == '"') {
+    int count_sym = 0;
+    for (int i = 0; i < strlen(check_str) - 2; i++) {
+      if (check_str[i] == symbol)
+        count_sym++;
+      if (count_sym && count_sym % 2 == 0 && check_str[i] == symbol &&
+          check_str[i + 1] != ',') {
+        if (check_sign(check_str[i + 1]))
+          er_flag = WRONG;
+      }
     }
   }
   return er_flag;

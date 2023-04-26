@@ -1,3 +1,6 @@
 *.sh
 *.out
 *.h.gch
+
+malloc_tools.c
+malloc_tools.h

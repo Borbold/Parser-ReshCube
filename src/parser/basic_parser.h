@@ -5,6 +5,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#include "../../malloc_tools.h"
+
 #define MAX_LEN 255
 
 int skip_comment(FILE *file, char r_b);

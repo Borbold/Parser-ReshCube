@@ -10,7 +10,7 @@ static void check_type_variable(operation *oper, char *r_value, int *i);
 parser_result *read_string(parser_state *struct_init) {
   FILE *file = struct_init->file;
 
-  parser_result *struct_result = malloc(sizeof(parser_result));
+  parser_result *struct_result = m_malloc(sizeof(parser_result));
 
   char *buff, r_b;
   buff = get_string(r_b, file);
@@ -18,9 +18,9 @@ parser_result *read_string(parser_state *struct_init) {
     return struct_result;
 
   int flag_N = 1;
-  char *r_name = malloc(strlen(buff));
+  char *r_name = m_malloc(strlen(buff));
   int flag_V = 0;
-  char *r_value = malloc(strlen(buff));
+  char *r_value = m_malloc(strlen(buff));
 
   int num_arg = 0;
   for (int i = 1, j = 0; i < strlen(buff); i++, j++) {
@@ -44,8 +44,8 @@ parser_result *read_string(parser_state *struct_init) {
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;
   struct_result->name = r_name;
-  struct_result->operation_list = malloc(num_arg * sizeof(operation));
-  char *op_name = malloc(sizeof(char));
+  struct_result->operation_list = m_malloc(num_arg * sizeof(operation));
+  char *op_name = m_malloc(sizeof(char));
 
   int i = 0, type_op = OP_NULL;
   for (int j = 0; j < num_arg; j++) {
@@ -70,14 +70,14 @@ parser_result *read_string(parser_state *struct_init) {
         struct_result->operation_list[j].operation_type = OP_NULL;
         struct_result->operation_list[j].operand.name = op_name;
         struct_result->operation_list[j].next = NULL;
-        op_name = malloc(sizeof(char));
+        op_name = m_malloc(sizeof(char));
         break;
       } else if (flag_LP == 1 && type_op != OP_NULL) {
         struct_result->operation_list[j].operation_type = type_op;
         struct_result->operation_list[j].operand.name = op_name;
-        operation *new_op = malloc(sizeof(operation));
+        operation *new_op = m_malloc(sizeof(operation));
         new_op->operation_type = OP_NULL;
-        new_op->operand.name = malloc(sizeof(char));
+        new_op->operand.name = m_malloc(sizeof(char));
         i++;
         for (int n = 0; i < strlen(r_value) - 1; i++, n++) {
           check_type_variable(new_op, r_value, &i);
@@ -93,14 +93,14 @@ parser_result *read_string(parser_state *struct_init) {
         }
         struct_result->operation_list[j].next = new_op;
         i++;
-        op_name = malloc(sizeof(char));
+        op_name = m_malloc(sizeof(char));
         break;
       }
       op_name[k] = r_value[i];
     }
   }
 
-  free(buff);
+  mr_free(buff);
   return struct_result;
 }
 
@@ -178,7 +178,7 @@ void free_result(parser_result *par) {
   operation *oper = par->operation_list;
   while (par->operation_list) {
     par->operation_list = par->operation_list->next;
-    free(oper);
+    mr_free(oper);
   }
-  free(par);
+  mr_free(par);
 }

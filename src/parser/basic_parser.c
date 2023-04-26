@@ -12,7 +12,7 @@ int skip_comment(FILE *file, char r_b) {
 
 char *get_word(char r_b, char *buff, int *read_count) {
   if (*read_count == 0) {
-    buff = malloc(MAX_LEN);
+    buff = m_malloc(MAX_LEN);
   }
 
   if (r_b == ' ' || r_b == '\n') {
@@ -35,7 +35,7 @@ char *get_string(char r_b, FILE *file) {
       buff = get_word(r_b, buff, &read_count);
     }
   }
-  char *nbuff = malloc(strlen(buff));
+  char *nbuff = m_malloc(strlen(buff));
   strncpy(nbuff, buff, strlen(buff));
   nbuff[strlen(buff)] = '\0';
   return nbuff;

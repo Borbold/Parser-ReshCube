@@ -22,7 +22,7 @@ static int check_skip_word(char *buff);
 parser_state *init_parser(char *path) {
   FILE *file = fopen(path, "r");
   // 2 - две используемые команды: variables и constant
-  parser_state *struct_init = malloc(sizeof(parser_state));
+  parser_state *struct_init = m_malloc(sizeof(parser_state));
   struct_init->file = file;
 
   char *buff, r_b;
@@ -75,7 +75,7 @@ parser_state *init_parser(char *path) {
                 break;
             fgetpos(file, &struct_init->state_pos);
             printf("%sSteps exist%s\n", "\033[1;34m", "\033[0m");
-            free(buff);
+            mr_free(buff);
             return struct_init;
           } else {
             printf("%sSteps not exist%s\n", "\033[1;31m", "\033[0m");
@@ -139,16 +139,16 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   else if (type == CONSTANT)
     fill_con(struct_init, arg_num, buff);
 
-  free(buff);
+  mr_free(buff);
   return struct_init;
 }
 
 void fill_var(parser_state *struct_init, int arg_num, char *buff) {
   struct_init->val_num = arg_num;
-  struct_init->var_list = malloc(arg_num * sizeof(variable_list));
+  struct_init->var_list = m_malloc(arg_num * sizeof(variable_list));
 
-  char *a_name = malloc(strlen(buff));
-  char *a_type = malloc(strlen(buff));
+  char *a_name = m_malloc(strlen(buff));
+  char *a_type = m_malloc(strlen(buff));
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
@@ -159,7 +159,7 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       a_name[j] = buff[i];
     }
     struct_init->var_list[arg].name = a_name;
-    a_name = malloc(strlen(buff));
+    a_name = m_malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
       if (buff[i] == '[')
         i++;
@@ -171,20 +171,20 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
     }
     struct_init->var_list[arg].type = a_type;
     if (strcmp(a_type, "integer") == 0)
-      struct_init->var_list[arg].value = malloc(sizeof(int));
+      struct_init->var_list[arg].value = m_malloc(sizeof(int));
     else if (strcmp(a_type, "decimal") == 0)
-      struct_init->var_list[arg].value = malloc(sizeof(float));
+      struct_init->var_list[arg].value = m_malloc(sizeof(float));
     else
-      struct_init->var_list[arg].value = malloc(sizeof(char));
-    a_type = malloc(strlen(buff));
+      struct_init->var_list[arg].value = m_malloc(sizeof(char));
+    a_type = m_malloc(strlen(buff));
   }
 }
 void fill_con(parser_state *struct_init, int arg_num, char *buff) {
   struct_init->con_num = arg_num;
-  struct_init->con_list = malloc(arg_num * sizeof(variable_list));
+  struct_init->con_list = m_malloc(arg_num * sizeof(variable_list));
 
-  char *a_name = malloc(strlen(buff));
-  char *a_value = malloc(strlen(buff));
+  char *a_name = m_malloc(strlen(buff));
+  char *a_value = m_malloc(strlen(buff));
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
@@ -195,7 +195,7 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       a_name[j] = buff[i];
     }
     struct_init->con_list[arg].name = a_name;
-    a_name = malloc(strlen(buff));
+    a_name = m_malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
       if (buff[i] == '[')
         i++;
@@ -206,16 +206,16 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       a_value[j] = buff[i];
     }
     struct_init->con_list[arg].value = a_value;
-    a_value = malloc(strlen(buff));
+    a_value = m_malloc(strlen(buff));
   }
 }
 
 void free_init(parser_state *par) {
   for (int i = 0; i < par->val_num; i++)
-    free(par[i].var_list);
-  free(par->var_list);
+    mr_free(par[i].var_list);
+  mr_free(par->var_list);
   for (int i = 0; i < par->con_num; i++)
-    free(par[i].con_list);
-  free(par->con_list);
-  free(par);
+    mr_free(par[i].con_list);
+  mr_free(par->con_list);
+  mr_free(par);
 }
