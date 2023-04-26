@@ -22,7 +22,9 @@ typedef struct {
   operation *operation_list;
 } parser_result;
 
-parser_result *read_string(parser_state *struct_init, int number_line);
+parser_result *read_string(parser_state *struct_init);
 void free_result(parser_result *par);
+void set_fposition(FILE *file, fpos_t pos);
+void get_fposition(FILE *file, fpos_t pos);
 
 #endif

@@ -11,7 +11,8 @@
 void main() {
   parser_state *struct_init = init_parser(DATA_FILE);
   if (!struct_init->err_str) {
-    parser_result *struct_result = read_string(struct_init, 28);
+    set_fposition(struct_init->file, struct_init->state_pos);
+    parser_result *struct_result = read_string(struct_init);
     if (struct_result->err_str) {
       printf("%s%s%s\n", "\033[1;31m", struct_result->err_str, "\033[0m");
       return;

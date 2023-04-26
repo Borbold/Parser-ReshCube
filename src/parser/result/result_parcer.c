@@ -6,26 +6,18 @@
 static int check_operation(char *str, int i);
 static void check_curly_braces(operation *oper, char *r_value, int *i);
 static void check_type_variable(operation *oper, char *r_value, int *i);
+static void one_line_shift(FILE *file, char r_b);
 
-parser_result *read_string(parser_state *struct_init, int number_line) {
-  number_line--;
-  fseek(struct_init->file, 0, SEEK_SET);
+parser_result *read_string(parser_state *struct_init) {
   FILE *file = struct_init->file;
 
   parser_result *struct_result = malloc(sizeof(parser_result));
 
   char *buff, r_b;
-  int count_line = 0;
-  while (fread(&r_b, 1, 1, file) > 0) {
-    if (count_line == number_line)
-      break;
-    if (r_b == '\n')
-      count_line++;
-  }
+  one_line_shift(file, r_b);
 
   buff = get_string(r_b, file);
-  if (check_error_all_miss_mirror_symbol(struct_result, buff,
-                                         number_line + 1) == 1)
+  if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 
   int flag_N = 1;
@@ -62,7 +54,7 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   for (int j = 0; j < num_arg; j++) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
-      if (check_error_long_line(struct_result, i, number_line))
+      if (check_error_long_line(struct_result, i, buff))
         return struct_result;
 
       if (r_value[i] == '[' || r_value[i] == ',') {
@@ -114,6 +106,18 @@ parser_result *read_string(parser_state *struct_init, int number_line) {
   free(buff);
   fclose(file);
   return struct_result;
+}
+
+void set_fposition(FILE *file, fpos_t pos) { fsetpos(file, &pos); }
+void get_fposition(FILE *file, fpos_t pos) { fgetpos(file, &pos); }
+
+void one_line_shift(FILE *file, char r_b) {
+  while (fread(&r_b, 1, 1, file) > 0) {
+    if (r_b == '\n') {
+      fread(&r_b, 1, 1, file);
+      break;
+    }
+  }
 }
 
 void check_type_variable(operation *oper, char *r_value, int *i) {

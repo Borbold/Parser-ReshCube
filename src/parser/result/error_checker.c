@@ -6,32 +6,32 @@ static int check_error_reverse_miss_mirror_symbol(char symbol_1, char symbol_2,
                                                   char *check_str);
 
 int check_error_all_miss_mirror_symbol(parser_result *struct_result,
-                                       char *check_str, int err_line) {
+                                       char *check_str) {
   char *er_str = malloc(sizeof(char));
   if (check_error_miss_mirror_symbol('[', ']', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol ']'", err_line);
+    sprintf(er_str, "On the line %s miss symbol ']'", check_str);
     struct_result->err_str = er_str;
     return 1;
   } else if (check_error_reverse_miss_mirror_symbol(']', '[', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol '['", err_line);
+    sprintf(er_str, "On the line %s miss symbol '['", check_str);
     struct_result->err_str = er_str;
     return 1;
   }
   if (check_error_miss_mirror_symbol('{', '}', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol '}'", err_line);
+    sprintf(er_str, "On the line %s miss symbol '}'", check_str);
     struct_result->err_str = er_str;
     return 1;
   } else if (check_error_reverse_miss_mirror_symbol('}', '{', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol '{'", err_line);
+    sprintf(er_str, "On the line %s miss symbol '{'", check_str);
     struct_result->err_str = er_str;
     return 1;
   } else if (check_error_reverse_miss_mirror_symbol('}', '$', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol '$'", err_line);
+    sprintf(er_str, "On the line %s miss symbol '$'", check_str);
     struct_result->err_str = er_str;
     return 1;
   }
   if (check_error_miss_mirror_symbol('"', '"', check_str) == 1) {
-    sprintf(er_str, "On the line %d miss symbol '%c'", err_line, '"');
+    sprintf(er_str, "On the line %s miss symbol '%c'", check_str, '"');
     struct_result->err_str = er_str;
     return 1;
   }
@@ -69,10 +69,10 @@ int check_error_reverse_miss_mirror_symbol(char symbol_1, char symbol_2,
 }
 
 int check_error_long_line(parser_result *struct_result, int i,
-                          int number_line) {
+                          char *string_line) {
   if (i >= 255) {
     char *err_str = "";
-    sprintf(err_str, "The line is too long. Number string: %d", number_line);
+    sprintf(err_str, "The line is too long. Number string: %s", string_line);
     struct_result->err_str = err_str;
     return 1;
   }

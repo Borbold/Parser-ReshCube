@@ -20,6 +20,8 @@ typedef struct {
 } constant_list;
 
 typedef struct {
+  fpos_t state_pos;
+  fpos_t current_pos;
   char *err_str;
   uint8_t val_num;
   variable_list *var_list;
