@@ -109,7 +109,7 @@ parser_result *read_string(parser_state *struct_init) {
 }
 
 void set_fposition(FILE *file, fpos_t pos) { fsetpos(file, &pos); }
-void get_fposition(FILE *file, fpos_t pos) { fgetpos(file, &pos); }
+void get_fposition(FILE *file, fpos_t *pos) { fgetpos(file, &pos); }
 
 void one_line_shift(FILE *file, char r_b) {
   while (fread(&r_b, 1, 1, file) > 0) {
