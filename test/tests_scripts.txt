@@ -15,10 +15,10 @@ constant: # секция объявления констант
 - target_orientation_z: ["0.5"]
 
 steps:  # начало скрипта
-- wait_coordinates: [${latitude}, ${longitude}] # ждём условие входа в бразильскую аномалию
-- orientation: [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}] # ждём ориентации аппарата
-- get_time: [${start_time}] # запоминаем время старта эксперимента
-- payload_power: ["Magnetometer", "true"] # включаем питание
+- wait_coordinates: [${latitude}, ${longitude}]
+- orientation: [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}]
+- get_time: [${start_time}]
+- payload_power: ["Magnetometer", "true"]
 - payload_power: ["Giroscope", "true"]
 - wait: ["120"]
 - create_meter: ["B_A"]

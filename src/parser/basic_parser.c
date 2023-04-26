@@ -1,5 +1,7 @@
 #include "basic_parser.h"
 
+#include "string.h"
+
 int skip_comment(FILE *file, char r_b) {
   if (r_b == '#')
     while (fread(&r_b, 1, 1, file) > 0)
@@ -26,10 +28,15 @@ char *get_string(char r_b, FILE *file) {
   char *buff;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (r_b == '#' || r_b == '\n')
+    if (r_b == '#' || r_b == '\n') {
       break;
-    if (r_b != ' ')
+    }
+    if (r_b != ' ') {
       buff = get_word(r_b, buff, &read_count);
+    }
   }
-  return buff;
+  char *nbuff = malloc(strlen(buff));
+  strncpy(nbuff, buff, strlen(buff));
+  nbuff[strlen(buff)] = '\0';
+  return nbuff;
 }

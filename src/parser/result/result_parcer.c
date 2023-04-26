@@ -6,7 +6,6 @@
 static int check_operation(char *str, int i);
 static void check_curly_braces(operation *oper, char *r_value, int *i);
 static void check_type_variable(operation *oper, char *r_value, int *i);
-static void one_line_shift(FILE *file, char r_b);
 
 parser_result *read_string(parser_state *struct_init) {
   FILE *file = struct_init->file;
@@ -14,8 +13,6 @@ parser_result *read_string(parser_state *struct_init) {
   parser_result *struct_result = malloc(sizeof(parser_result));
 
   char *buff, r_b;
-  one_line_shift(file, r_b);
-
   buff = get_string(r_b, file);
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
@@ -26,7 +23,7 @@ parser_result *read_string(parser_state *struct_init) {
   char *r_value = malloc(strlen(buff));
 
   int num_arg = 0;
-  for (int i = 0, j = 0; i < strlen(buff); i++, j++) {
+  for (int i = 1, j = 0; i < strlen(buff); i++, j++) {
     if (flag_N) {
       if (buff[i] == ':') {
         flag_N = 0;
@@ -62,12 +59,12 @@ parser_result *read_string(parser_state *struct_init) {
         i++;
       }
 
-      check_type_variable(struct_result->operation_list, r_value, &i);
-      check_curly_braces(struct_result->operation_list, r_value, &i);
+      check_type_variable(&struct_result->operation_list[j], r_value, &i);
+      if (struct_result->operation_list[j].operand.type == VALUE_EXACLY)
+        check_curly_braces(&struct_result->operation_list[j], r_value, &i);
 
-      if (flag_LP) {
+      if (flag_LP)
         type_op = check_operation(r_value, i);
-      }
 
       if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
@@ -111,15 +108,6 @@ void set_fposition(FILE *file, fpos_t pos) { fsetpos(file, &pos); }
 fpos_t get_fposition(FILE *file, fpos_t pos) {
   fgetpos(file, &pos);
   return pos;
-}
-
-void one_line_shift(FILE *file, char r_b) {
-  while (fread(&r_b, 1, 1, file) > 0) {
-    if (r_b == '\n') {
-      fread(&r_b, 1, 1, file);
-      break;
-    }
-  }
 }
 
 void check_type_variable(operation *oper, char *r_value, int *i) {
@@ -187,8 +175,10 @@ int check_operation(char *str, int i) {
 }
 
 void free_result(parser_result *par) {
-  for (int i = 0; i < par->attribute_num; i++)
-    free(par[i].operation_list);
-  free(par->operation_list);
+  operation *oper = par->operation_list;
+  while (par->operation_list) {
+    par->operation_list = par->operation_list->next;
+    free(oper);
+  }
   free(par);
 }

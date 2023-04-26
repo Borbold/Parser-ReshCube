@@ -2,7 +2,9 @@
     "files.associations": {
         "result_parser.h": "c",
         "init_parser.h": "c",
-        "init_parcer.h": "c"
+        "init_parcer.h": "c",
+        "error_checker.h": "c",
+        "basic_parser.h": "c"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll": true

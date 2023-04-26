@@ -70,6 +70,9 @@ parser_state *init_parser(char *path) {
           }
         } else if (i == STEPS) {
           if (strcmp(buff, parser_command[i]) == 0) {
+            while (fread(&r_b, 1, 1, file) > 0)
+              if (r_b == '\n')
+                break;
             fgetpos(file, &struct_init->state_pos);
             printf("%sSteps exist%s\n", "\033[1;34m", "\033[0m");
             free(buff);
