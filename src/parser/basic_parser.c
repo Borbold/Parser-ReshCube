@@ -20,10 +20,10 @@ void get_word(char r_b, char *buff, int *read_count) {
   }
 }
 
-void get_string(FILE *file, char *buff) {
+int get_string(FILE *file, char *buff) {
   char r_b;
-  int read_count = 0, check_line = 0;
-  while (fread(&r_b, 1, 1, file) > 0) {
+  int read_count = 0, check_line = 0, check_file = 0;
+  while (check_file = fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '\n')
       break;
     if (r_b == '#' || r_b == '\r') {
@@ -39,6 +39,7 @@ void get_string(FILE *file, char *buff) {
   }
   if (check_line == 0)
     buff[0] = '\0';
+  return check_file;
 }
 
 int checker_sign(char r_b) {

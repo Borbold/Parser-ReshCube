@@ -14,11 +14,8 @@ parser_result *read_string(parser_state *struct_init) {
   struct_result->err_str = NULL;
 
   char *buff = m_malloc(MAX_LEN);
-  int check_file = 0;
   do {
-    get_string(file, buff);
-    check_file++;
-    if (check_file > 5) {
+    if (get_string(file, buff) == 0) {
       struct_result->err_str = "End of FILE.";
       return struct_result;
     }
