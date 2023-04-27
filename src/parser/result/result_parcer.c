@@ -31,6 +31,7 @@ parser_result *read_string(parser_state *struct_init) {
       if (buff[i] == ':') {
         flag_N = 0;
         flag_V = 1;
+        r_name[j] = '\0';
         j = 0;
         i++;
       } else {
@@ -42,10 +43,10 @@ parser_result *read_string(parser_state *struct_init) {
     }
     if (flag_V) {
       r_value[j] = buff[i];
+      if (buff[i] == ']')
+        r_value[j + 1] = '\0';
     }
   }
-  r_name[strlen(r_name)] = '\0';
-  r_value[strlen(r_value)] = '\0';
 
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;

@@ -25,7 +25,10 @@ char *get_string(FILE *file) {
   char *buff = m_malloc(MAX_LEN);
   int read_count = 0, check_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (r_b == '#' || r_b == '\n' || r_b == '\t' || r_b == '\r') {
+    if (r_b == '#' || r_b == '\t' || r_b == '\r') {
+      while (fread(&r_b, 1, 1, file) > 0)
+        if (r_b == '\n')
+          break;
       break;
     }
     if (r_b != ' ') {
