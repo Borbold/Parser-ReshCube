@@ -105,7 +105,7 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   char *buff = m_malloc(MAX_LEN), r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (skip_comment(file, r_b) == 0) {
+    if (skip_comment(file, r_b) == 0 && checker_sign(r_b) == 0) {
       if (r_b != '-') {
         fsetpos(file, &pos);
         break;

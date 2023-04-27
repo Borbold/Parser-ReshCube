@@ -5,8 +5,8 @@ variables: # секция объявления переменных
 - start_time: ["integer"]
 - wait_time: ["integer"]
 constant: # секция объявления констант
-- latitude: ["41.40338"]
-- longitude: ["2.17403"]
+- latitude: ["41.40338"]    
+- longitude: ["2.17403"]    
 - period: ["3600"]
 - averaging_factor: ["0.5"]
 - target_orientation_w: ["0.2"]
