@@ -15,6 +15,10 @@ parser_result *read_string(parser_state *struct_init) {
 
   char *buff, r_b;
   buff = get_string(r_b, file);
+  if (buff == NULL) {
+    struct_result->err_str = "Empty string";
+    return struct_result;
+  }
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 

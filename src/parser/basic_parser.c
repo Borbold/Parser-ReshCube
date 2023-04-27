@@ -22,15 +22,18 @@ void get_word(char r_b, char *buff, int *read_count) {
 
 char *get_string(char r_b, FILE *file) {
   char *buff = m_malloc(MAX_LEN);
-  int read_count = 0;
+  int read_count = 0, check_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '#' || r_b == '\n' || r_b == '\t' || r_b == '\r') {
       break;
     }
     if (r_b != ' ') {
       get_word(r_b, buff, &read_count);
+      check_line = 1;
     }
   }
+  if (check_line == 0)
+    return NULL;
   char *nbuff = m_malloc(strlen(buff));
   strncpy(nbuff, buff, strlen(buff));
   nbuff[strlen(buff)] = '\0';
