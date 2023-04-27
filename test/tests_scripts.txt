@@ -1,18 +1,28 @@
 - program:
+
 name: "experiment_Brazilian_magnetic_anomaly"
+
 description: "Cбор магнитометрических и температурных данных"
-variables: # секция объявления переменных
+
+variables: # секция объявления переменных  
 - start_time: ["integer"]
+
 - wait_time: ["integer"]
+
 constant: # секция объявления констант
-- latitude: ["41.40338"]    
+
+- latitude: ["41.40338"]     
+
 - longitude: ["2.17403"]    
 - period: ["3600"]
+
 - averaging_factor: ["0.5"]
-- target_orientation_w: ["0.2"]
+- target_orientation_w: ["0.2"]  
 - target_orientation_x: ["0.3"]
+
 - target_orientation_y: ["0.4"]
 - target_orientation_z: ["0.5"]
+
 
 steps:  # начало скрипта
 - wait_coordinates: [${latitude}, ${longitude}]
