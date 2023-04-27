@@ -12,7 +12,7 @@ static int check_error_reverse_miss_mirror_symbol(char symbol_1, char symbol_2,
 
 int check_error_all_miss_mirror_symbol(parser_result *struct_result,
                                        char *check_str) {
-  char *er_str = m_malloc(sizeof(char));
+  char er_str[MAX_LEN];
   if (check_error_miss_mirror_symbol('[', ']', check_str) == WRONG) {
     sprintf(er_str, "1) On the line - %s miss symbol ']'", check_str);
     struct_result->err_str = er_str;
@@ -53,7 +53,6 @@ int check_error_all_miss_mirror_symbol(parser_result *struct_result,
     return WRONG;
   }
 
-  mr_free(er_str);
   return CORRECT;
 }
 

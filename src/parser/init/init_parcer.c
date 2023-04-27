@@ -26,7 +26,7 @@ parser_state *init_parser(char *path) {
   struct_init->file = file;
   struct_init->err_str = NULL;
 
-  char *buff = m_malloc(MAX_LEN), r_b;
+  char buff[MAX_LEN], r_b;
   int read_count = 0, read_command[3] = {0, 0, 0}, ch_flag = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     get_word(r_b, buff, &read_count);
@@ -78,7 +78,6 @@ parser_state *init_parser(char *path) {
                 break;
             fgetpos(file, &struct_init->state_pos);
             printf("%sSteps exist%s\n", "\033[1;34m", "\033[0m");
-            mr_free(buff);
             return struct_init;
           } else {
             printf("%sSteps not exist%s\n", "\033[1;31m", "\033[0m");
@@ -88,11 +87,9 @@ parser_state *init_parser(char *path) {
         }
       }
     }
-
     if (ch_flag == 0 && r_b == '\n')
       ch_flag = 1;
   }
-  mr_free(buff);
 }
 
 int check_word(char *buff) {
@@ -109,7 +106,7 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   int arg_num = 0;
 
   fpos_t pos;
-  char *buff = m_malloc(MAX_LEN), r_b;
+  char buff[MAX_LEN], r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (skip_comment(file, r_b) == 0 && checker_sign(r_b) == 0) {
@@ -149,7 +146,6 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   } else if (type == CONSTANT)
     fill_con(struct_init, arg_num, buff);
 
-  mr_free(buff);
   return struct_init;
 }
 
@@ -157,8 +153,8 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
   struct_init->val_num = arg_num;
   struct_init->var_list = m_malloc(arg_num * sizeof(variable_list));
 
-  char *a_name = m_malloc(strlen(buff));
-  char *a_type = m_malloc(strlen(buff));
+  char a_name[strlen(buff)];
+  char a_type[strlen(buff)];
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
@@ -195,15 +191,13 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       struct_init->err_str = "Type not define!!!";
     }
   }
-  mr_free(a_name);
-  mr_free(a_type);
 }
 void fill_con(parser_state *struct_init, int arg_num, char *buff) {
   struct_init->con_num = arg_num;
   struct_init->con_list = m_malloc(arg_num * sizeof(variable_list));
 
-  char *a_name = m_malloc(strlen(buff));
-  char *a_value = m_malloc(strlen(buff));
+  char a_name[strlen(buff)];
+  char a_value[strlen(buff)];
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
@@ -227,8 +221,6 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
     }
     struct_init->con_list[arg].value = a_value;
   }
-  mr_free(a_name);
-  mr_free(a_value);
 }
 
 void free_init(parser_state *par) {

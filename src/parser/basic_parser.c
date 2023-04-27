@@ -20,9 +20,8 @@ void get_word(char r_b, char *buff, int *read_count) {
   }
 }
 
-char *get_string(FILE *file) {
+void get_string(FILE *file, char *buff) {
   char r_b;
-  char *buff = m_malloc(MAX_LEN);
   int read_count = 0, check_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '\n')
@@ -39,12 +38,7 @@ char *get_string(FILE *file) {
     }
   }
   if (check_line == 0)
-    return NULL;
-  char *nbuff = m_malloc(strlen(buff));
-  strncpy(nbuff, buff, strlen(buff));
-  nbuff[strlen(buff)] = '\0';
-  mr_free(buff);
-  return nbuff;
+    buff = NULL;
 }
 
 int checker_sign(char r_b) {

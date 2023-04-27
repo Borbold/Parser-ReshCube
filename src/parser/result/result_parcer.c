@@ -13,17 +13,17 @@ parser_result *read_string(parser_state *struct_init) {
   parser_result *struct_result = m_malloc(sizeof(parser_result));
   struct_result->err_str = NULL;
 
-  char *buff;
+  char *buff = malloc(MAX_LEN);
   do {
-    buff = get_string(file);
+    get_string(file, buff);
   } while (buff == NULL);
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 
   int flag_N = 1;
-  char *r_name = m_malloc(strlen(buff));
+  char r_name[strlen(buff)];
   int flag_V = 0;
-  char *r_value = m_malloc(strlen(buff));
+  char r_value[strlen(buff)];
 
   int num_arg = 0;
   for (int i = 1, j = 0; i < strlen(buff); i++, j++) {
@@ -50,9 +50,10 @@ parser_result *read_string(parser_state *struct_init) {
 
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;
-  struct_result->name = r_name;
+  struct_result->name = malloc(strlen(r_name) + 1);
+  sprintf(struct_result->name, "%s", r_name);
   struct_result->operation_list = m_malloc(num_arg * sizeof(operation));
-  char *op_name = m_malloc(sizeof(char));
+  char op_name[MAX_LEN];
 
   int i = 0, type_op = OP_NULL;
   for (int j = 0; j < num_arg; j++) {
@@ -76,23 +77,26 @@ parser_result *read_string(parser_state *struct_init) {
 
       if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
-        struct_result->operation_list[j].operand.name = op_name;
-        struct_result->operation_list[j].operand.name = op_name;
+        struct_result->operation_list[j].operand.name =
+            malloc(strlen(op_name) + 1);
+        sprintf(struct_result->operation_list[j].operand.name, "%s", op_name);
         struct_result->operation_list[j].next = NULL;
-        op_name = m_malloc(sizeof(char));
         break;
       } else if (flag_LP == 1 && type_op != OP_NULL) {
         struct_result->operation_list[j].operation_type = type_op;
-        struct_result->operation_list[j].operand.name = op_name;
+        struct_result->operation_list[j].operand.name =
+            malloc(strlen(op_name) + 1);
+        sprintf(struct_result->operation_list[j].operand.name, "%s", op_name);
         operation *new_op = m_malloc(sizeof(operation));
         new_op->operation_type = OP_NULL;
-        new_op->operand.name = m_malloc(sizeof(char));
+        new_op->operand.name = m_malloc(MAX_LEN);
         i++;
         for (int n = 0; i < strlen(r_value) - 1; i++, n++) {
           check_type_variable(new_op, r_value, &i);
           check_curly_braces(new_op, r_value, &i);
 
           if (r_value[i] == ',' || r_value[i] == ']') {
+            new_op->operand.name[n] = '\0';
             new_op->next = NULL;
             i++;
             break;
@@ -102,7 +106,6 @@ parser_result *read_string(parser_state *struct_init) {
         }
         struct_result->operation_list[j].next = new_op;
         i++;
-        op_name = m_malloc(sizeof(char));
         break;
       }
       op_name[k] = r_value[i];
@@ -110,8 +113,6 @@ parser_result *read_string(parser_state *struct_init) {
   }
 
   mr_free(buff);
-  mr_free(r_value);
-  mr_free(op_name);
   return struct_result;
 }
 
