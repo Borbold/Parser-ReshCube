@@ -13,10 +13,14 @@ parser_result *read_string(parser_state *struct_init) {
   parser_result *struct_result = m_malloc(sizeof(parser_result));
   struct_result->err_str = NULL;
 
-  char *buff = malloc(MAX_LEN);
+  char *buff = m_malloc(MAX_LEN);
   do {
     get_string(file, buff);
   } while (buff == NULL);
+  if (strlen(buff) == 0) {
+    struct_result->err_str = "End of FILE.";
+    return struct_result;
+  }
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 
@@ -50,7 +54,7 @@ parser_result *read_string(parser_state *struct_init) {
 
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;
-  struct_result->name = malloc(strlen(r_name) + 1);
+  struct_result->name = m_malloc(strlen(r_name) + 1);
   sprintf(struct_result->name, "%s", r_name);
   struct_result->operation_list = m_malloc(num_arg * sizeof(operation));
   char op_name[MAX_LEN];
@@ -78,14 +82,14 @@ parser_result *read_string(parser_state *struct_init) {
       if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
         struct_result->operation_list[j].operand.name =
-            malloc(strlen(op_name) + 1);
+            m_malloc(strlen(op_name) + 1);
         sprintf(struct_result->operation_list[j].operand.name, "%s", op_name);
         struct_result->operation_list[j].next = NULL;
         break;
       } else if (flag_LP == 1 && type_op != OP_NULL) {
         struct_result->operation_list[j].operation_type = type_op;
         struct_result->operation_list[j].operand.name =
-            malloc(strlen(op_name) + 1);
+            m_malloc(strlen(op_name) + 1);
         sprintf(struct_result->operation_list[j].operand.name, "%s", op_name);
         operation *new_op = m_malloc(sizeof(operation));
         new_op->operation_type = OP_NULL;
