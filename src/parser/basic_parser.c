@@ -20,7 +20,8 @@ void get_word(char r_b, char *buff, int *read_count) {
   }
 }
 
-char *get_string(char r_b, FILE *file) {
+char *get_string(FILE *file) {
+  char r_b;
   char *buff = m_malloc(MAX_LEN);
   int read_count = 0, check_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {

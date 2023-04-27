@@ -15,7 +15,7 @@ parser_result *read_string(parser_state *struct_init) {
 
   char *buff, r_b;
   do
-    buff = get_string(r_b, file);
+    buff = get_string(file);
   while (buff == NULL);
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
