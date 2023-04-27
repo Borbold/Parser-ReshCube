@@ -229,6 +229,7 @@ void free_init(parser_state *par) {
   mr_free(par->var_list);
   for (int i = 0; i < par->con_num; i++)
     mr_free(par[i].con_list);
+  mr_free(par->err_str);
   mr_free(par->con_list);
   mr_free(par);
   fclose(par->file);

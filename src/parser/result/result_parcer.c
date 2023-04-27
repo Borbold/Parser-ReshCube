@@ -15,13 +15,16 @@ parser_result *read_string(parser_state *struct_init) {
 
   char *buff = m_malloc(MAX_LEN);
   do {
-    if (get_string(file, buff) == 0) {
+    if (get_string(file, buff) == 1) {
       struct_result->err_str = "End of FILE.";
+      struct_result->result_type = RESULT_ERR;
       return struct_result;
     }
   } while (buff[0] == '\0');
-  if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
+  if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1) {
+    struct_result->result_type = RESULT_ERR;
     return struct_result;
+  }
 
   int flag_N = 1;
   char r_name[strlen(buff)];
@@ -63,8 +66,10 @@ parser_result *read_string(parser_state *struct_init) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
       op_name[k] = '\0';
-      if (check_error_long_line(struct_result, i, buff))
+      if (check_error_long_line(struct_result, i, buff)) {
+        struct_result->result_type = RESULT_ERR;
         return struct_result;
+      }
 
       if (r_value[i] == '[' || r_value[i] == ',') {
         flag_LP = 1;
@@ -190,10 +195,14 @@ int check_operation(char *str, int i) {
 }
 
 void free_result(parser_result *par) {
-  while (par->operation_list->next) {
-    operation *op = par->operation_list;
-    par->operation_list = par->operation_list->next;
-    free(op);
+  if (par->operation_list) {
+    while (par->operation_list->next) {
+      operation *op = par->operation_list;
+      par->operation_list = par->operation_list->next;
+      mr_free(op);
+    }
   }
+  mr_free(par->err_str);
+  mr_free(par->name);
   mr_free(par);
 }
