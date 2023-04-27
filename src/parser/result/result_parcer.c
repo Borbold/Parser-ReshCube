@@ -14,11 +14,9 @@ parser_result *read_string(parser_state *struct_init) {
   struct_result->err_str = NULL;
 
   char *buff, r_b;
-  buff = get_string(r_b, file);
-  if (buff == NULL) {
-    struct_result->err_str = "Empty string";
-    return struct_result;
-  }
+  do
+    buff = get_string(r_b, file);
+  while (buff == NULL);
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 
@@ -35,8 +33,9 @@ parser_result *read_string(parser_state *struct_init) {
         flag_V = 1;
         j = 0;
         i++;
-      } else
+      } else {
         r_name[j] = buff[i];
+      }
     }
     if (buff[i] == '[' || buff[i] == ',') {
       num_arg++;
@@ -45,6 +44,8 @@ parser_result *read_string(parser_state *struct_init) {
       r_value[j] = buff[i];
     }
   }
+  r_name[strlen(r_name)] = '\0';
+  r_value[strlen(r_value)] = '\0';
 
   struct_result->result_type = RESULT_FUN;
   struct_result->attribute_num = num_arg;
