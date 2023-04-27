@@ -187,10 +187,10 @@ int check_operation(char *str, int i) {
 }
 
 void free_result(parser_result *par) {
-  operation *oper = par->operation_list;
-  while (par->operation_list) {
+  while (par->operation_list->next) {
+    operation *op = par->operation_list;
     par->operation_list = par->operation_list->next;
-    mr_free(oper);
+    free(op);
   }
   mr_free(par);
 }

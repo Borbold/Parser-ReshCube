@@ -37,5 +37,6 @@ void main(int argc, char *argv[]) {
         }
       }
     }
+    free_result(struct_result);
   }
 }
