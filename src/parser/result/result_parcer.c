@@ -14,13 +14,15 @@ parser_result *read_string(parser_state *struct_init) {
   struct_result->err_str = NULL;
 
   char *buff = m_malloc(MAX_LEN);
+  int check_file = 0;
   do {
     get_string(file, buff);
-  } while (buff == NULL);
-  if (strlen(buff) == 0) {
-    struct_result->err_str = "End of FILE.";
-    return struct_result;
-  }
+    check_file++;
+    if (check_file > 5) {
+      struct_result->err_str = "End of FILE.";
+      return struct_result;
+    }
+  } while (buff[0] == '\0');
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 

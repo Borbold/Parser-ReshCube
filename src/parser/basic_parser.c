@@ -38,7 +38,7 @@ void get_string(FILE *file, char *buff) {
     }
   }
   if (check_line == 0)
-    buff = NULL;
+    buff[0] = '\0';
 }
 
 int checker_sign(char r_b) {
