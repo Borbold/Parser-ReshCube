@@ -11,21 +11,18 @@ int skip_comment(FILE *file, char r_b) {
 }
 
 char *get_word(char r_b, char *buff, int *read_count) {
-  if (*read_count == 0) {
-    buff = m_malloc(MAX_LEN);
-  }
-
   if (r_b == ' ' || r_b == '\n') {
     *read_count = 0;
   } else {
     buff[*read_count] = r_b;
     *read_count += 1;
+    buff[*read_count] = '\0';
   }
   return buff;
 }
 
 char *get_string(char r_b, FILE *file) {
-  char *buff;
+  char *buff = m_malloc(MAX_LEN);
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (r_b == '#' || r_b == '\n') {

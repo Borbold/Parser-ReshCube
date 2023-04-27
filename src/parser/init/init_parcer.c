@@ -25,7 +25,7 @@ parser_state *init_parser(char *path) {
   parser_state *struct_init = m_malloc(sizeof(parser_state));
   struct_init->file = file;
 
-  char *buff, r_b;
+  char *buff = m_malloc(MAX_LEN), r_b;
   int read_count = 0, read_command = 0, ch_flag = 1;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (skip_comment(file, r_b) == 0)
@@ -61,6 +61,7 @@ parser_state *init_parser(char *path) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, CONSTANT);
+            fread(&r_b, 1, 1, file);
             read_command++;
             break;
           } else {
@@ -101,7 +102,7 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   int arg_num = 0;
 
   fpos_t pos;
-  char *buff, r_b;
+  char *buff = m_malloc(MAX_LEN), r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (skip_comment(file, r_b) == 0) {
