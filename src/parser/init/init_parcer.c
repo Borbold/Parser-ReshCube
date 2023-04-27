@@ -39,40 +39,38 @@ parser_state *init_parser(char *path) {
         if (read_command[PROGRAM] == 0) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
-            read_command[i] = 1;
+            read_command[PROGRAM] = 1;
             break;
           } else {
             printf("%sProgramm not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Programm not exist";
             return struct_init;
           }
-        } else if (read_command[VARIABLES] == 0 &&
-                   strcmp(buff, parser_command[i]) == 0) {
-          if (strcmp(buff, parser_command[i]) == 0) {
+        } else if (read_command[VARIABLES] == 0) {
+          if (strcmp(buff, parser_command[VARIABLES]) == 0) {
             printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, VARIABLES);
-            read_command[i] = 1;
+            read_command[VARIABLES] = 1;
             break;
           } else {
             printf("%sVariables not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Variables not exist";
             return struct_init;
           }
-        } else if (read_command[CONSTANT] == 0 &&
-                   strcmp(buff, parser_command[i]) == 0) {
-          if (strcmp(buff, parser_command[i]) == 0) {
+        } else if (read_command[CONSTANT] == 0) {
+          if (strcmp(buff, parser_command[CONSTANT]) == 0) {
             printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, CONSTANT);
             fread(&r_b, 1, 1, file);
-            read_command[i] = 1;
+            read_command[CONSTANT] = 1;
             break;
           } else {
             printf("%sConstant not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Constant not exist";
             return struct_init;
           }
-        } else if (i == STEPS && strcmp(buff, parser_command[i]) == 0) {
-          if (strcmp(buff, parser_command[i]) == 0) {
+        } else if (i == STEPS) {
+          if (strcmp(buff, parser_command[STEPS]) == 0) {
             while (fread(&r_b, 1, 1, file) > 0)
               if (r_b == '\n')
                 break;
