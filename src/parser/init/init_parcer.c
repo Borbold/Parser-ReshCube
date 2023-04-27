@@ -24,6 +24,7 @@ parser_state *init_parser(char *path) {
   // 2 - две используемые команды: variables и constant
   parser_state *struct_init = m_malloc(sizeof(parser_state));
   struct_init->file = file;
+  struct_init->err_str = NULL;
 
   char *buff = m_malloc(MAX_LEN), r_b;
   int read_count = 0, read_command[3] = {0, 0, 0}, ch_flag = 0;
@@ -158,6 +159,7 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
+      a_name[j] = '\0';
       if (buff[i] == ':') {
         i++;
         break;
@@ -167,6 +169,7 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
     struct_init->var_list[arg].name = a_name;
     a_name = m_malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
+      a_type[j] = '\0';
       if (buff[i] == '[')
         i++;
       if (buff[i] == ']') {
@@ -175,13 +178,16 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       }
       a_type[j] = buff[i];
     }
-    struct_init->var_list[arg].type = a_type;
-    if (strcmp(a_type, "integer") == 0)
+    if (strcmp(a_type, "integer") == 0) {
       struct_init->var_list[arg].value = m_malloc(sizeof(int));
-    else if (strcmp(a_type, "decimal") == 0)
+      struct_init->var_list[arg].type = INTEGER;
+    } else if (strcmp(a_type, "decimal") == 0) {
       struct_init->var_list[arg].value = m_malloc(sizeof(float));
-    else
+      struct_init->var_list[arg].type = DECIMALE;
+    } else {
       struct_init->var_list[arg].value = m_malloc(sizeof(char));
+      struct_init->var_list[arg].type = STRING;
+    }
     a_type = m_malloc(strlen(buff));
   }
 }

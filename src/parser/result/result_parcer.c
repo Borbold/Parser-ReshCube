@@ -11,6 +11,7 @@ parser_result *read_string(parser_state *struct_init) {
   FILE *file = struct_init->file;
 
   parser_result *struct_result = m_malloc(sizeof(parser_result));
+  struct_result->err_str = NULL;
 
   char *buff, r_b;
   buff = get_string(r_b, file);
@@ -51,6 +52,7 @@ parser_result *read_string(parser_state *struct_init) {
   for (int j = 0; j < num_arg; j++) {
     int flag_LP = 0;
     for (int k = 0; i < strlen(r_value) - 1; i++, k++) {
+      op_name[k] = '\0';
       if (check_error_long_line(struct_result, i, buff))
         return struct_result;
 

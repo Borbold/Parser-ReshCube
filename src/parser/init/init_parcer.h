@@ -8,9 +8,15 @@
 
 #include "../value.h"
 
+typedef enum {
+  INTEGER,
+  DECIMALE,
+  STRING,
+} variable_type;
+
 typedef struct {
   char *name;
-  char *type;
+  variable_type type;
   void *value;
 } variable_list;
 
