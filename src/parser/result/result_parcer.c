@@ -13,7 +13,7 @@ parser_result *read_string(parser_state *struct_init) {
   parser_result *struct_result = m_malloc(sizeof(parser_result));
   struct_result->err_str = NULL;
 
-  char *buff, r_b;
+  char *buff;
   do
     buff = get_string(file);
   while (buff == NULL);
