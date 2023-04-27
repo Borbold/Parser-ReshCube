@@ -10,15 +10,14 @@ int skip_comment(FILE *file, char r_b) {
   return 0;
 }
 
-char *get_word(char r_b, char *buff, int *read_count) {
-  if (r_b == ' ' || r_b == '\n') {
+void get_word(char r_b, char *buff, int *read_count) {
+  if (checker_sign(r_b)) {
     *read_count = 0;
   } else {
     buff[*read_count] = r_b;
     *read_count += 1;
     buff[*read_count] = '\0';
   }
-  return buff;
 }
 
 char *get_string(char r_b, FILE *file) {
@@ -29,11 +28,17 @@ char *get_string(char r_b, FILE *file) {
       break;
     }
     if (r_b != ' ') {
-      buff = get_word(r_b, buff, &read_count);
+      get_word(r_b, buff, &read_count);
     }
   }
   char *nbuff = m_malloc(strlen(buff));
   strncpy(nbuff, buff, strlen(buff));
   nbuff[strlen(buff)] = '\0';
   return nbuff;
+}
+
+int checker_sign(char r_b) {
+  if (r_b == ' ' || r_b == '\n' || r_b == '\t' || r_b == '\r')
+    return 1;
+  return 0;
 }

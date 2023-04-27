@@ -29,7 +29,7 @@ parser_state *init_parser(char *path) {
   int read_count = 0, read_command = 0, ch_flag = 1;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (skip_comment(file, r_b) == 0)
-      buff = get_word(r_b, buff, &read_count);
+      get_word(r_b, buff, &read_count);
     if (check_skip_word(buff))
       ch_flag = 0;
 
@@ -115,19 +115,19 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
       while (fread(&r_b, 1, 1, file) > 0) {
         if (r_b == ' ')
           break;
-        buff = get_word(r_b, buff, &read_count);
+        get_word(r_b, buff, &read_count);
       }
       // get: name
       while (fread(&r_b, 1, 1, file) > 0) {
         if (r_b == ' ')
           break;
-        buff = get_word(r_b, buff, &read_count);
+        get_word(r_b, buff, &read_count);
       }
       // get: value
       while (fread(&r_b, 1, 1, file) > 0) {
-        if (r_b == ' ' || r_b == '\n')
+        if (checker_sign(r_b))
           break;
-        buff = get_word(r_b, buff, &read_count);
+        get_word(r_b, buff, &read_count);
       }
 
       arg_num++;

@@ -10,7 +10,8 @@
 #define MAX_LEN 255
 
 int skip_comment(FILE *file, char r_b);
-char *get_word(char r_b, char *buff, int *read_count);
+void get_word(char r_b, char *buff, int *read_count);
 char *get_string(char r_b, FILE *file);
+int checker_sign(char r_b);
 
 #endif

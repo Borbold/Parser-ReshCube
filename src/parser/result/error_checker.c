@@ -69,10 +69,10 @@ int check_error_long_line(parser_result *struct_result, int i,
 }
 
 int check_sign(char r_b) {
-  if (r_b != '+' || r_b != '-' || r_b != '*' || r_b != '/' || r_b != '<' ||
-      r_b != '>' || r_b != ')' || r_b != '(' || r_b != '|' || r_b != '&')
-    return 1;
-  return 0;
+  if (r_b == '+' || r_b == '-' || r_b == '*' || r_b == '/' || r_b == '<' ||
+      r_b == '>' || r_b == ')' || r_b == '(' || r_b == '|' || r_b == '&')
+    return 0;
+  return 1;
 }
 
 int check_error_miss_sign(char symbol, char *check_str) {
@@ -80,7 +80,7 @@ int check_error_miss_sign(char symbol, char *check_str) {
   if (symbol == '}') {
     for (int i = 0; i < strlen(check_str) - 2; i++) {
       if (check_str[i] == symbol && check_str[i + 1] != ',') {
-        if (check_sign(check_str[i + 1]))
+        if (check_sign(check_str[i + 1]) == 1)
           er_flag = WRONG;
       }
     }
@@ -91,7 +91,7 @@ int check_error_miss_sign(char symbol, char *check_str) {
         count_sym++;
       if (count_sym && count_sym % 2 == 0 && check_str[i] == symbol &&
           check_str[i + 1] != ',') {
-        if (check_sign(check_str[i + 1]))
+        if (check_sign(check_str[i + 1]) == 1)
           er_flag = WRONG;
       }
     }
