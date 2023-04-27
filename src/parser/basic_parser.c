@@ -24,7 +24,7 @@ char *get_string(char r_b, FILE *file) {
   char *buff = m_malloc(MAX_LEN);
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (r_b == '#' || r_b == '\n') {
+    if (r_b == '#' || r_b == '\n' || r_b == '\t' || r_b == '\r') {
       break;
     }
     if (r_b != ' ') {

@@ -141,9 +141,11 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
     }
   }
 
-  if (type == VARIABLES)
+  if (type == VARIABLES) {
     fill_var(struct_init, arg_num, buff);
-  else if (type == CONSTANT)
+    if (struct_init->err_str != NULL)
+      return struct_init;
+  } else if (type == CONSTANT)
     fill_con(struct_init, arg_num, buff);
 
   mr_free(buff);
@@ -172,6 +174,8 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       a_type[j] = '\0';
       if (buff[i] == '[')
         i++;
+      if (buff[i] == '"')
+        i++;
       if (buff[i] == ']') {
         i++;
         break;
@@ -184,9 +188,11 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
     } else if (strcmp(a_type, "decimal") == 0) {
       struct_init->var_list[arg].value = m_malloc(sizeof(float));
       struct_init->var_list[arg].type = DECIMALE;
-    } else {
+    } else if (strcmp(a_type, "string") == 0) {
       struct_init->var_list[arg].value = m_malloc(sizeof(char));
       struct_init->var_list[arg].type = STRING;
+    } else {
+      struct_init->err_str = "Type not define!!!";
     }
     a_type = m_malloc(strlen(buff));
   }
