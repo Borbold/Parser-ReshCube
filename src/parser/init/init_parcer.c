@@ -26,7 +26,7 @@ parser_state *init_parser(char *path) {
   struct_init->file = file;
 
   char *buff = m_malloc(MAX_LEN), r_b;
-  int read_count = 0, read_command = 0, ch_flag = 1;
+  int read_count = 0, read_command[3] = {0, 0, 0}, ch_flag = 1;
   while (fread(&r_b, 1, 1, file) > 0) {
     if (skip_comment(file, r_b) == 0)
       get_word(r_b, buff, &read_count);
@@ -35,41 +35,43 @@ parser_state *init_parser(char *path) {
 
     if (read_count == 0 && strlen(buff) > 0 && strcmp(buff, "-") != 0 &&
         ch_flag) {
-      for (int i = read_command; i < count_command; i++) {
-        if (i == PROGRAM) {
+      for (int i = 0; i < count_command; i++) {
+        if (read_command[PROGRAM] == 0) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
-            read_command++;
+            read_command[i] = 1;
             break;
           } else {
             printf("%sProgramm not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Programm not exist";
             return struct_init;
           }
-        } else if (i == VARIABLES) {
+        } else if (read_command[VARIABLES] == 0 &&
+                   strcmp(buff, parser_command[i]) == 0) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, VARIABLES);
-            read_command++;
+            read_command[i] = 1;
             break;
           } else {
             printf("%sVariables not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Variables not exist";
             return struct_init;
           }
-        } else if (i == CONSTANT) {
+        } else if (read_command[CONSTANT] == 0 &&
+                   strcmp(buff, parser_command[i]) == 0) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sConstant exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, CONSTANT);
             fread(&r_b, 1, 1, file);
-            read_command++;
+            read_command[i] = 1;
             break;
           } else {
             printf("%sConstant not exist%s\n", "\033[1;31m", "\033[0m");
             struct_init->err_str = "Constant not exist";
             return struct_init;
           }
-        } else if (i == STEPS) {
+        } else if (i == STEPS && strcmp(buff, parser_command[i]) == 0) {
           if (strcmp(buff, parser_command[i]) == 0) {
             while (fread(&r_b, 1, 1, file) > 0)
               if (r_b == '\n')
@@ -113,13 +115,13 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
 
       // get: -
       while (fread(&r_b, 1, 1, file) > 0) {
-        if (r_b == ' ')
+        if (checker_sign(r_b))
           break;
         get_word(r_b, buff, &read_count);
       }
       // get: name
       while (fread(&r_b, 1, 1, file) > 0) {
-        if (r_b == ' ')
+        if (checker_sign(r_b))
           break;
         get_word(r_b, buff, &read_count);
       }
