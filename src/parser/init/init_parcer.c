@@ -38,7 +38,7 @@ parser_state *init_parser(char *path) {
           if (strcmp(buff, parser_command[i]) == 0) {
             printf("%sProgramm exist%s\n", "\033[1;34m", "\033[0m");
             read_command[PROGRAM] = 1;
-            free(buff);
+            buff[0] = '\0';
             break;
           } else {
             printf("%sProgramm not exist%s\n", "\033[1;31m", "\033[0m");
@@ -50,6 +50,7 @@ parser_state *init_parser(char *path) {
             printf("%sVariables exist%s\n", "\033[1;34m", "\033[0m");
             attr_get_state(struct_init, file, VARIABLES);
             read_command[VARIABLES] = 1;
+            buff[0] = '\0';
             break;
           } else {
             printf("%sVariables not exist%s\n", "\033[1;31m", "\033[0m");
@@ -62,6 +63,7 @@ parser_state *init_parser(char *path) {
             attr_get_state(struct_init, file, CONSTANT);
             fread(&r_b, 1, 1, file);
             read_command[CONSTANT] = 1;
+            buff[0] = '\0';
             break;
           } else {
             printf("%sConstant not exist%s\n", "\033[1;31m", "\033[0m");
@@ -108,7 +110,7 @@ parser_state *attr_get_state(parser_state *struct_init, FILE *file, int type) {
   char *buff = m_malloc(MAX_LEN), r_b;
   int read_count = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (skip_comment(file, r_b) == 0) {
+    if (skip_comment(file, r_b) == 0 && checker_sign(r_b) == 0) {
       if (r_b != '-') {
         fsetpos(file, &pos);
         break;
