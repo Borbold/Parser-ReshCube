@@ -14,9 +14,9 @@ parser_result *read_string(parser_state *struct_init) {
   struct_result->err_str = NULL;
 
   char *buff;
-  do
+  do {
     buff = get_string(file);
-  while (buff == NULL);
+  } while (buff == NULL);
   if (check_error_all_miss_mirror_symbol(struct_result, buff) == 1)
     return struct_result;
 
@@ -77,6 +77,7 @@ parser_result *read_string(parser_state *struct_init) {
       if (r_value[i] == ',' || r_value[i] == ']') {
         struct_result->operation_list[j].operation_type = OP_NULL;
         struct_result->operation_list[j].operand.name = op_name;
+        struct_result->operation_list[j].operand.name = op_name;
         struct_result->operation_list[j].next = NULL;
         op_name = m_malloc(sizeof(char));
         break;
@@ -109,6 +110,8 @@ parser_result *read_string(parser_state *struct_init) {
   }
 
   mr_free(buff);
+  mr_free(r_value);
+  mr_free(op_name);
   return struct_result;
 }
 

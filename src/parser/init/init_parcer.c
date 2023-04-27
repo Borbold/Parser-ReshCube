@@ -92,6 +92,7 @@ parser_state *init_parser(char *path) {
     if (ch_flag == 0 && r_b == '\n')
       ch_flag = 1;
   }
+  mr_free(buff);
 }
 
 int check_word(char *buff) {
@@ -169,7 +170,6 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       a_name[j] = buff[i];
     }
     struct_init->var_list[arg].name = a_name;
-    a_name = m_malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
       a_type[j] = '\0';
       if (buff[i] == '[')
@@ -194,8 +194,9 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
     } else {
       struct_init->err_str = "Type not define!!!";
     }
-    a_type = m_malloc(strlen(buff));
   }
+  mr_free(a_name);
+  mr_free(a_type);
 }
 void fill_con(parser_state *struct_init, int arg_num, char *buff) {
   struct_init->con_num = arg_num;
@@ -206,6 +207,7 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
   int i = 0;
   for (int arg = 0; arg < arg_num; arg++) {
     for (int j = 0; i < strlen(buff); i++, j++) {
+      a_name[j] = '\0';
       if (buff[i] == ':') {
         i++;
         break;
@@ -213,8 +215,8 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       a_name[j] = buff[i];
     }
     struct_init->con_list[arg].name = a_name;
-    a_name = m_malloc(strlen(buff));
     for (int j = 0; i < strlen(buff); i++, j++) {
+      a_value[j] = '\0';
       if (buff[i] == '[')
         i++;
       if (buff[i] == ']') {
@@ -224,8 +226,9 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       a_value[j] = buff[i];
     }
     struct_init->con_list[arg].value = a_value;
-    a_value = m_malloc(strlen(buff));
   }
+  mr_free(a_name);
+  mr_free(a_value);
 }
 
 void free_init(parser_state *par) {

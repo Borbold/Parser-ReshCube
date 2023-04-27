@@ -25,13 +25,15 @@ char *get_string(FILE *file) {
   char *buff = m_malloc(MAX_LEN);
   int read_count = 0, check_line = 0;
   while (fread(&r_b, 1, 1, file) > 0) {
-    if (r_b == '#' || r_b == '\t' || r_b == '\r') {
+    if (r_b == '\n')
+      break;
+    if (r_b == '#' || r_b == '\r') {
       while (fread(&r_b, 1, 1, file) > 0)
         if (r_b == '\n')
           break;
       break;
     }
-    if (r_b != ' ') {
+    if (r_b != ' ' && r_b != '\t') {
       get_word(r_b, buff, &read_count);
       check_line = 1;
     }
@@ -41,6 +43,7 @@ char *get_string(FILE *file) {
   char *nbuff = m_malloc(strlen(buff));
   strncpy(nbuff, buff, strlen(buff));
   nbuff[strlen(buff)] = '\0';
+  mr_free(buff);
   return nbuff;
 }
 

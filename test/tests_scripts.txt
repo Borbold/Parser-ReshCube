@@ -25,10 +25,9 @@ constant: # секция объявления констант
 
 
 steps:  # начало скрипта
-- wait_coordinates: [${latitude}, ${longitude}]     #fdafaddas
-
-- orientation: [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}]
-- get_time: [${start_time}]  
+- wait_coordinates: [${latitude}, ${longitude}] 
+- orientation: [${target_orientation_w}, ${target_orientation_x}, ${target_orientation_y}, ${target_orientation_z}] 
+- get_time: [${start_time}]   
 - payload_power: ["Magnetometer", "true"]   
 - payload_power: ["Giroscope", "true"]
 - wait: ["120"]
