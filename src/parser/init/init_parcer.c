@@ -43,7 +43,8 @@ parser_state *init_parser(char *path) {
             break;
           } else {
             printf("%sProgramm not exist%s\n", "\033[1;31m", "\033[0m");
-            struct_init->err_str = "Programm not exist";
+            struct_init->err_str = malloc(strlen("Programm not exist.") + 1);
+            sprintf(struct_init->err_str, "%s", "Programm not exist.");
             return struct_init;
           }
         } else if (read_command[VARIABLES] == 0) {
@@ -55,7 +56,8 @@ parser_state *init_parser(char *path) {
             break;
           } else {
             printf("%sVariables not exist%s\n", "\033[1;31m", "\033[0m");
-            struct_init->err_str = "Variables not exist";
+            struct_init->err_str = malloc(strlen("Variables not exist.") + 1);
+            sprintf(struct_init->err_str, "%s", "Variables not exist.");
             return struct_init;
           }
         } else if (read_command[CONSTANT] == 0) {
@@ -68,7 +70,8 @@ parser_state *init_parser(char *path) {
             break;
           } else {
             printf("%sConstant not exist%s\n", "\033[1;31m", "\033[0m");
-            struct_init->err_str = "Constant not exist";
+            struct_init->err_str = malloc(strlen("Constant not exist.") + 1);
+            sprintf(struct_init->err_str, "%s", "Constant not exist.");
             return struct_init;
           }
         } else if (i == STEPS) {
@@ -81,7 +84,8 @@ parser_state *init_parser(char *path) {
             return struct_init;
           } else {
             printf("%sSteps not exist%s\n", "\033[1;31m", "\033[0m");
-            struct_init->err_str = "Steps not exist";
+            struct_init->err_str = malloc(strlen("Steps not exist.") + 1);
+            sprintf(struct_init->err_str, "%s", "Steps not exist.");
             return struct_init;
           }
         }
@@ -189,7 +193,8 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       struct_init->var_list[arg].value = m_malloc(sizeof(char));
       struct_init->var_list[arg].type = STRING;
     } else {
-      struct_init->err_str = "Type not define!!!";
+      struct_init->err_str = malloc(strlen("Type not define.") + 1);
+      sprintf(struct_init->err_str, "%s", "Type not define.");
     }
   }
 }

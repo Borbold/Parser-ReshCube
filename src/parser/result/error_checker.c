@@ -9,57 +9,63 @@ static int check_error_miss_mirror_symbol(char symbol_1, char symbol_2,
                                           char *check_str);
 static int check_error_reverse_miss_mirror_symbol(char symbol_1, char symbol_2,
                                                   char *check_str);
+static void split_err_string(parser_result *struct_result, char *err);
 
 int check_error_all_miss_mirror_symbol(parser_result *struct_result,
                                        char *check_str) {
   char er_str[MAX_LEN];
   if (check_error_miss_mirror_symbol('[', ']', check_str) == WRONG) {
     sprintf(er_str, "1) On the line - %s miss symbol ']'", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   } else if (check_error_reverse_miss_mirror_symbol(']', '[', check_str) ==
              WRONG) {
     sprintf(er_str, "2) On the line - %s miss symbol '['", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   }
 
   if (check_error_miss_mirror_symbol('{', '}', check_str) == WRONG) {
     sprintf(er_str, "3) On the line - %s miss symbol '}'", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   } else if (check_error_reverse_miss_mirror_symbol('}', '{', check_str) ==
              WRONG) {
     sprintf(er_str, "4) On the line - %s miss symbol '{'", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   } else if (check_error_reverse_miss_mirror_symbol('}', '$', check_str) ==
              WRONG) {
     sprintf(er_str, "5) On the line - %s miss symbol '$'", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   }
 
   if (check_error_miss_mirror_symbol('"', '"', check_str) == WRONG) {
     sprintf(er_str, "6) On the line - %s miss symbol '%c'", check_str, '"');
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   }
 
   if (check_error_miss_sign('}', check_str) == WRONG ||
       check_error_miss_sign('"', check_str) == WRONG) {
     sprintf(er_str, "7) On the line - %s miss symbol ',' or sign", check_str);
-    struct_result->err_str = er_str;
+    split_err_string(struct_result, er_str);
     return WRONG;
   }
 
   return CORRECT;
 }
 
+void split_err_string(parser_result *struct_result, char *err) {
+  struct_result->err_str = malloc(strlen(err) + 1);
+  strcpy(struct_result->err_str, err);
+}
+
 int check_error_long_line(parser_result *struct_result, int i,
                           char *string_line) {
-  if (i >= 255) {
-    char *err_str = "";
+  if (i >= MAX_LEN) {
+    char err_str[MAX_LEN];
     sprintf(err_str, "The line is too long. Error string: %s", string_line);
     struct_result->err_str = err_str;
     return WRONG;
