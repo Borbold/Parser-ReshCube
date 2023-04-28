@@ -165,7 +165,8 @@ void fill_var(parser_state *struct_init, int arg_num, char *buff) {
       }
       a_name[j] = buff[i];
     }
-    struct_init->var_list[arg].name = a_name;
+    struct_init->var_list[arg].name = m_malloc(strlen(a_name) + 1);
+    sprintf(struct_init->var_list[arg].name, "%s", a_name);
     for (int j = 0; i < strlen(buff); i++, j++) {
       a_type[j] = '\0';
       if (buff[i] == '[')
@@ -208,7 +209,8 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       }
       a_name[j] = buff[i];
     }
-    struct_init->con_list[arg].name = a_name;
+    struct_init->con_list[arg].name = m_malloc(strlen(a_name) + 1);
+    sprintf(struct_init->con_list[arg].name, "%s", a_name);
     for (int j = 0; i < strlen(buff); i++, j++) {
       a_value[j] = '\0';
       if (buff[i] == '[')
@@ -219,7 +221,8 @@ void fill_con(parser_state *struct_init, int arg_num, char *buff) {
       }
       a_value[j] = buff[i];
     }
-    struct_init->con_list[arg].value = a_value;
+    struct_init->con_list[arg].value = m_malloc(strlen(a_value) + 1);
+    sprintf(struct_init->con_list[arg].value, "%s", a_value);
   }
 }
 
