@@ -12,11 +12,13 @@ parser_result *read_string(parser_state *struct_init) {
 
   parser_result *struct_result = m_malloc(sizeof(parser_result));
   struct_result->err_str = NULL;
+  struct_result->name = NULL;
 
   char *buff = m_malloc(MAX_LEN);
   do {
     if (get_string(file, buff) == 1) {
-      struct_result->err_str = "End of FILE.";
+      struct_result->err_str = malloc(strlen("End of FILE.") + 1);
+      sprintf(struct_result->err_str, "%s", "End of FILE.");
       struct_result->result_type = RESULT_ERR;
       return struct_result;
     }

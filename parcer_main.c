@@ -18,6 +18,7 @@ void main(int argc, char *argv[]) {
       struct_result = read_string(struct_init);
       if (struct_result->err_str && strlen(struct_result->err_str) > 0) {
         printf("%s%s%s\n", "\033[1;31m", struct_result->err_str, "\033[0m");
+        free_result(struct_result);
         return;
       }
     }
