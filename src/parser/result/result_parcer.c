@@ -203,6 +203,7 @@ void free_result(parser_result *par) {
       par->operation_list = par->operation_list->next;
       mr_free(op);
     }
+    mr_free(par->operation_list);
   }
   mr_free(par->err_str);
   mr_free(par->name);
