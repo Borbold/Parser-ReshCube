@@ -25,6 +25,8 @@ parser_state *init_parser(char *path) {
   parser_state *struct_init = m_malloc(sizeof(parser_state));
   struct_init->file = file;
   struct_init->err_str = NULL;
+  struct_init->con_list = NULL;
+  struct_init->var_list = NULL;
 
   char buff[MAX_LEN], r_b;
   int read_count = 0, read_command[3] = {0, 0, 0}, ch_flag = 0;
@@ -237,8 +239,8 @@ void free_init(parser_state *par) {
   mr_free(par->var_list);
   for (int i = 0; i < par->con_num; i++)
     mr_free(par[i].con_list);
-  mr_free(par->err_str);
   mr_free(par->con_list);
+  mr_free(par->err_str);
   mr_free(par);
   fclose(par->file);
 }
