@@ -126,10 +126,11 @@ parser_result *read_string(parser_state *struct_init) {
   return struct_result;
 }
 
-void set_fposition(FILE *file, fpos_t pos) { fsetpos(file, &pos); }
-fpos_t get_fposition(FILE *file, fpos_t pos) {
-  fgetpos(file, &pos);
-  return pos;
+void set_fposition(parser_state *state, fpos_t pos) {
+  fsetpos(state->file, &pos);
+}
+void get_fposition(parser_state *state) {
+  fgetpos(state->file, &state->current_pos);
 }
 
 void check_type_variable(operation *oper, char *r_value, int *i) {

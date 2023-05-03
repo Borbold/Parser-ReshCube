@@ -11,7 +11,7 @@
 void main(int argc, char *argv[]) {
   parser_state *struct_init = init_parser(DATA_FILE);
   if (!struct_init->err_str) {
-    set_fposition(struct_init->file, struct_init->state_pos);
+    set_fposition(struct_init, struct_init->state_pos);
     parser_result *struct_result;
     // Имитация чтения строк
     for (int i = 0; i < atoi(argv[1]); i++) {

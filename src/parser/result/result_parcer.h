@@ -24,7 +24,7 @@ typedef struct {
 
 parser_result *read_string(parser_state *struct_init);
 void free_result(parser_result *par);
-void set_fposition(FILE *file, fpos_t pos);
-fpos_t get_fposition(FILE *file, fpos_t pos);
+void set_fposition(parser_state *state, fpos_t pos);
+void get_fposition(parser_state *state);
 
 #endif
